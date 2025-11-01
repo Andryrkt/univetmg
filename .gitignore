@@ -2,7 +2,6 @@
 /.env.local
 /.env.*.local
 /config/secrets/prod/prod.*
-/var/cache/
-/var/log/
+/var/
 /vendor/
 ###< symfony/framework-bundle ###
