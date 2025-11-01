@@ -1,5 +1,6 @@
 ###> symfony/framework-bundle ###
 /.env.local
+/.env.production
 /.env.*.local
 /config/secrets/prod/prod.*
 /var/
