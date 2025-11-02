@@ -5,4 +5,5 @@
 /config/secrets/prod/prod.*
 /var/
 /vendor/
+composer.lock
 ###< symfony/framework-bundle ###
