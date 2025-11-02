@@ -4,10 +4,15 @@ composer require symfony/security-bundle
 composer require symfony/validator
 composer require symfony/form
 composer require symfony/maker-bundle --dev
+composer require symfony/twig-bundle
+composer require symfonycasts/verify-email-bundle symfony/mailer
+composer require --dev phpunit/phpunit symfony/test-pack
 
 
 # ligne de commande pour la base de donnée
 php bin/console doctrine:database:create #pour la creation de la base de donnée
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
 
 
 # verification du chemin php ini
