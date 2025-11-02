@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.8",
+    "vite": "^7.1.12",
+    "vite-plugin-symfony": "^8.2.2"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.93.3"
+  }
+}
