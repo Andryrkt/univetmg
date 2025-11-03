@@ -2,13 +2,6 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
         
-        # Configuration pour SQLite en dev
-        options:
-            # Pour SQLite
-            sqlite: 
-                user: null
-                password: null
-                
         # Types mappés pour PostgreSQL
         mapping_types:
             enum: string
