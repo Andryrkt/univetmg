@@ -2,12 +2,12 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Users;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UsersFixtures extends Fixture
+class UserFixtures extends Fixture
 {
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher
@@ -16,7 +16,7 @@ class UsersFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Création d'un utilisateur standard pour tester le login
-        $user = new Users();
+        $user = new User();
         $user->setEmail('user@example.com');
         $user->setFirstName('Jean');
         $user->setLastName('Dupont');
@@ -27,7 +27,7 @@ class UsersFixtures extends Fixture
         $manager->persist($user);
 
         // Création d'un administrateur
-        $admin = new Users();
+        $admin = new User();
         $admin->setEmail('admin@example.com');
         $admin->setFirstName('Admin');
         $admin->setLastName('System');
@@ -38,7 +38,7 @@ class UsersFixtures extends Fixture
         $manager->persist($admin);
 
         // Création d'un utilisateur non vérifié
-        $unverifiedUser = new Users();
+        $unverifiedUser = new User();
         $unverifiedUser->setEmail('unverified@example.com');
         $unverifiedUser->setFirstName('Pierre');
         $unverifiedUser->setLastName('Martin');
@@ -50,7 +50,7 @@ class UsersFixtures extends Fixture
 
         // Création de plusieurs utilisateurs supplémentaires pour les tests
         for ($i = 1; $i <= 5; $i++) {
-            $testUser = new Users();
+            $testUser = new User();
             $testUser->setEmail("testuser{$i}@example.com");
             $testUser->setFirstName("Prénom{$i}");
             $testUser->setLastName("Nom{$i}");
