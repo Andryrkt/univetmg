@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Bienvenue sur Univet</h1>
+    <p>Veuillez vous connecter pour accéder à l'application.</p>
+    <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
+</div>
+{% endblock %}

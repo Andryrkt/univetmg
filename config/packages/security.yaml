@@ -25,7 +25,8 @@ security:
                 # password_parameter: password
             logout:
                 path: app_logout
-                target: app_home
+                # where to redirect after login
+                target: app_home_private
 
             # Activer remember me
             remember_me:
@@ -36,6 +37,7 @@ security:
 
     access_control:
       - { path: ^/admin, roles: ROLE_ADMIN }
+      - { path: ^/home, roles: ROLE_USER }
       - { path: ^/profile, roles: ROLE_USER }
       - { path: ^/login, roles: PUBLIC_ACCESS }
       - { path: ^/register, roles: PUBLIC_ACCESS }
