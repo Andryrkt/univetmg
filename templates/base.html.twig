@@ -19,6 +19,10 @@
 		{% endblock %}
 	</head>
 	<body>
-		{% block body %}{% endblock %}
+		{{ include('_partials/nav.html.twig') }}
+
+		<main class="container mt-4">
+			{% block body %}{% endblock %}
+		</main>
 	</body>
 </html>

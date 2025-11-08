@@ -41,7 +41,7 @@ class ProduitType extends AbstractType
             ->add('stockMinimum', NumberType::class)
             ->add('datePeremption')
             ->add('fournisseur')
-            ->add('conversions', CollectionType::class, [
+            ->add('uniteConversions', CollectionType::class, [
                 'entry_type' => UniteConversionType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
