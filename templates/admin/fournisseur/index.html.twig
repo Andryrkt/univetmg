@@ -1,41 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Fournisseur index{% endblock %}
+{% block title %}Gestion des Fournisseurs{% endblock %}
 
 {% block body %}
-    <h1>Fournisseur index</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Gestion des Fournisseurs</h1>
+        <a href="{{ path('app_admin_fournisseur_new') }}" class="btn btn-primary">Créer un fournisseur</a>
+    </div>
 
-    <table class="table">
-        <thead>
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-light">
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
-                <th>Telephone</th>
-                <th>Adresse</th>
+                <th>Téléphone</th>
                 <th>Email</th>
-                <th>actions</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for fournisseur in fournisseurs %}
             <tr>
-                <td>{{ fournisseur.id }}</td>
                 <td>{{ fournisseur.nom }}</td>
                 <td>{{ fournisseur.telephone }}</td>
-                <td>{{ fournisseur.adresse }}</td>
                 <td>{{ fournisseur.email }}</td>
-                <td>
-                    <a href="{{ path('app_admin_fournisseur_show', {'id': fournisseur.id}) }}">show</a>
-                    <a href="{{ path('app_admin_fournisseur_edit', {'id': fournisseur.id}) }}">edit</a>
+                <td class="text-end">
+                    <a href="{{ path('app_admin_fournisseur_show', {'id': fournisseur.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                    <a href="{{ path('app_admin_fournisseur_edit', {'id': fournisseur.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="5" class="text-center">Aucun fournisseur trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_admin_fournisseur_new') }}">Create new</a>
 {% endblock %}

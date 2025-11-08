@@ -1,13 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Fournisseur{% endblock %}
+{% block title %}Modifier le Fournisseur{% endblock %}
 
 {% block body %}
-    <h1>Edit Fournisseur</h1>
+    <h1>Modifier le Fournisseur</h1>
 
-    {{ include('admin/fournisseur/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('admin/fournisseur/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('app_admin_fournisseur_index') }}">back to list</a>
-
-    {{ include('admin/fournisseur/_delete_form.html.twig') }}
+    <div class="d-flex mt-3">
+        <a href="{{ path('app_admin_fournisseur_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <div class="ms-auto">
+            {{ include('admin/fournisseur/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

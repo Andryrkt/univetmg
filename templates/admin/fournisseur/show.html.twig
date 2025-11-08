@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Fournisseur{% endblock %}
+{% block title %}Détail du Fournisseur{% endblock %}
 
 {% block body %}
-    <h1>Fournisseur</h1>
+    <h1>Détail du Fournisseur</h1>
 
-    <table class="table">
+    <table class="table table-bordered mt-4">
         <tbody>
             <tr>
-                <th>Id</th>
+                <th style="width: 20%;">Id</th>
                 <td>{{ fournisseur.id }}</td>
             </tr>
             <tr>
@@ -16,7 +16,7 @@
                 <td>{{ fournisseur.nom }}</td>
             </tr>
             <tr>
-                <th>Telephone</th>
+                <th>Téléphone</th>
                 <td>{{ fournisseur.telephone }}</td>
             </tr>
             <tr>
@@ -30,9 +30,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_admin_fournisseur_index') }}">back to list</a>
+    <div class="d-flex mt-3">
+        <a href="{{ path('app_admin_fournisseur_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <a href="{{ path('app_admin_fournisseur_edit', {'id': fournisseur.id}) }}" class="btn btn-warning ms-2">Modifier</a>
+        <div class="ms-auto">
+            {{ include('admin/fournisseur/_delete_form.html.twig') }}
+        </div>
+    </div>
 
-    <a href="{{ path('app_admin_fournisseur_edit', {'id': fournisseur.id}) }}">edit</a>
-
-    {{ include('admin/fournisseur/_delete_form.html.twig') }}
 {% endblock %}
