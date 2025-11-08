@@ -1,49 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Produit index{% endblock %}
+{% block title %}Gestion des Produits{% endblock %}
 
 {% block body %}
-    <h1>Produit index</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Gestion des Produits</h1>
+        <a href="{{ path('app_produit_new') }}" class="btn btn-primary">Créer un produit</a>
+    </div>
 
-    <table class="table">
-        <thead>
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-light">
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
-                <th>Description</th>
                 <th>Code</th>
-                <th>StockInitial</th>
-                <th>StockMinimum</th>
-                <th>PrixAchat</th>
-                <th>PrixVente</th>
-                <th>DatePeremption</th>
-                <th>actions</th>
+                <th>Stock Initial</th>
+                <th>Prix Vente</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for produit in produits %}
             <tr>
-                <td>{{ produit.id }}</td>
                 <td>{{ produit.nom }}</td>
-                <td>{{ produit.description }}</td>
                 <td>{{ produit.code }}</td>
                 <td>{{ produit.stockInitial }}</td>
-                <td>{{ produit.stockMinimum }}</td>
-                <td>{{ produit.prixAchat }}</td>
-                <td>{{ produit.prixVente }}</td>
-                <td>{{ produit.datePeremption ? produit.datePeremption|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
-                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+                <td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td>
+                <td class="text-end">
+                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">no records found</td>
+                <td colspan="5" class="text-center">Aucun produit trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_produit_new') }}">Create new</a>
 {% endblock %}

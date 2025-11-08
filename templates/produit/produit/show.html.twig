@@ -1,54 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Produit{% endblock %}
+{% block title %}Détail du Produit{% endblock %}
 
 {% block body %}
-    <h1>Produit</h1>
+    <h1>Détail du Produit</h1>
 
-    <table class="table">
+    <table class="table table-bordered mt-4">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ produit.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ produit.nom }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ produit.description }}</td>
-            </tr>
-            <tr>
-                <th>Code</th>
-                <td>{{ produit.code }}</td>
-            </tr>
-            <tr>
-                <th>StockInitial</th>
-                <td>{{ produit.stockInitial }}</td>
-            </tr>
-            <tr>
-                <th>StockMinimum</th>
-                <td>{{ produit.stockMinimum }}</td>
-            </tr>
-            <tr>
-                <th>PrixAchat</th>
-                <td>{{ produit.prixAchat }}</td>
-            </tr>
-            <tr>
-                <th>PrixVente</th>
-                <td>{{ produit.prixVente }}</td>
-            </tr>
-            <tr>
-                <th>DatePeremption</th>
-                <td>{{ produit.datePeremption ? produit.datePeremption|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+            <tr><th style="width: 25%;">Id</th><td>{{ produit.id }}</td></tr>
+            <tr><th>Nom</th><td>{{ produit.nom }}</td></tr>
+            <tr><th>Description</th><td>{{ produit.description }}</td></tr>
+            <tr><th>Code</th><td>{{ produit.code }}</td></tr>
+            <tr><th>Stock Initial</th><td>{{ produit.stockInitial }}</td></tr>
+            <tr><th>Stock Minimum</th><td>{{ produit.stockMinimum }}</td></tr>
+            <tr><th>Prix Achat</th><td>{{ produit.prixAchat|number_format(2, ',', ' ') }} Ar</td></tr>
+            <tr><th>Prix Vente</th><td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td></tr>
+            <tr><th>Date Péremption</th><td>{{ produit.datePeremption ? produit.datePeremption|date('d/m/Y') : '' }}</td></tr>
+            <tr><th>Fournisseur</th><td>{{ produit.fournisseur ? produit.fournisseur.nom : '' }}</td></tr>
+            <tr><th>Catégorie</th><td>{{ produit.categorie ? produit.categorie.nom : '' }}</td></tr>
+            <tr><th>Unité de base</th><td>{{ produit.uniteDeBase ? produit.uniteDeBase.nom : '' }}</td></tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_produit_index') }}">back to list</a>
+    <div class="d-flex mt-3">
+        <a href="{{ path('app_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        <a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-warning ms-2">Modifier</a>
+        <div class="ms-auto">
+            {{ include('produit/produit/_delete_form.html.twig') }}
+        </div>
+    </div>
 
-    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
-
-    {{ include('produit/produit/_delete_form.html.twig') }}
 {% endblock %}
