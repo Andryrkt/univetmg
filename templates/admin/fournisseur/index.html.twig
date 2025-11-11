@@ -26,6 +26,7 @@
                 <td class="text-end">
                     <a href="{{ path('app_admin_fournisseur_show', {'id': fournisseur.id}) }}" class="btn btn-sm btn-info">Voir</a>
                     <a href="{{ path('app_admin_fournisseur_edit', {'id': fournisseur.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                    <a href="{{ path('app_admin_fournisseur_delete', {'id': fournisseur.id}) }}" class="btn btn-sm btn-danger" data-turbo-method="POST" data-turbo-confirm="Êtes-vous sûr de vouloir supprimer ce fournisseur ?">Supprimer</a>
                 </td>
             </tr>
         {% else %}

@@ -6,57 +6,52 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Faker\Factory;
 
 class UserFixtures extends Fixture
 {
+    public const ADMIN_USER_REFERENCE = 'admin_user';
+    public const USER_USER_REFERENCE = 'user_user';
+
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher
     ) {}
 
     public function load(ObjectManager $manager): void
     {
-        // Création d'un utilisateur standard pour tester le login
-        $user = new User();
-        $user->setEmail('user@example.com');
-        $user->setFirstName('Jean');
-        $user->setLastName('Dupont');
-        $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
-        $user->setRoles(['ROLE_USER']);
-        $user->setIsVerified(true);
-
-        $manager->persist($user);
+        $faker = Factory::create('fr_FR');
 
         // Création d'un administrateur
         $admin = new User();
-        $admin->setEmail('admin@example.com');
+        $admin->setEmail('admin@univet.com'); // Email unique pour l'admin
         $admin->setFirstName('Admin');
-        $admin->setLastName('System');
+        $admin->setLastName('Univet');
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setIsVerified(true);
-
         $manager->persist($admin);
+        $this->addReference(self::ADMIN_USER_REFERENCE, $admin);
 
-        // Création d'un utilisateur non vérifié
-        $unverifiedUser = new User();
-        $unverifiedUser->setEmail('unverified@example.com');
-        $unverifiedUser->setFirstName('Pierre');
-        $unverifiedUser->setLastName('Martin');
-        $unverifiedUser->setPassword($this->passwordHasher->hashPassword($unverifiedUser, 'temp123'));
-        $unverifiedUser->setRoles(['ROLE_USER']);
-        $unverifiedUser->setIsVerified(false);
-
-        $manager->persist($unverifiedUser);
+        // Création d'un utilisateur standard
+        $user = new User();
+        $user->setEmail('user@univet.com'); // Email unique pour l'utilisateur
+        $user->setFirstName('Utilisateur');
+        $user->setLastName('Standard');
+        $user->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
+        $user->setRoles(['ROLE_USER']);
+        $user->setIsVerified(true);
+        $manager->persist($user);
+        $this->addReference(self::USER_USER_REFERENCE, $user);
 
         // Création de plusieurs utilisateurs supplémentaires pour les tests
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $testUser = new User();
-            $testUser->setEmail("testuser{$i}@example.com");
-            $testUser->setFirstName("Prénom{$i}");
-            $testUser->setLastName("Nom{$i}");
-            $testUser->setPassword($this->passwordHasher->hashPassword($testUser, "test{$i}"));
-            $testUser->setRoles(['ROLE_USER']);
-            $testUser->setIsVerified($i % 2 === 0); // Alterner entre vérifié et non vérifié
+            $testUser->setEmail($faker->unique()->safeEmail());
+            $testUser->setFirstName($faker->firstName());
+            $testUser->setLastName($faker->lastName());
+            $testUser->setPassword($this->passwordHasher->hashPassword($testUser, 'password'));
+            $testUser->setRoles($faker->boolean(20) ? ['ROLE_ADMIN'] : ['ROLE_USER']); // 20% d'admins
+            $testUser->setIsVerified($faker->boolean(80)); // 80% vérifiés
 
             $manager->persist($testUser);
         }

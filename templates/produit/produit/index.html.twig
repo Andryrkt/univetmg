@@ -28,6 +28,7 @@
                 <td class="text-end">
                     <a href="{{ path('app_produit_show', {'id': produit.id}) }}" class="btn btn-sm btn-info">Voir</a>
                     <a href="{{ path('app_produit_edit', {'id': produit.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                    <a href="{{ path('app_produit_delete', {'id': produit.id}) }}" class="btn btn-sm btn-danger" data-turbo-method="POST" data-turbo-confirm="Êtes-vous sûr de vouloir supprimer ce produit ?">Supprimer</a>
                 </td>
             </tr>
         {% else %}
