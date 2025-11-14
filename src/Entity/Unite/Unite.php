@@ -23,12 +23,6 @@ class Unite
     private ?string $symbole = null;
 
     /**
-     * @var Collection<int, UniteConversion>
-     */
-    #[ORM\OneToMany(targetEntity: UniteConversion::class, mappedBy: 'uniteSource')]
-    private Collection $uniteConversions;
-
-    /**
      * @var Collection<int, Produit>
      */
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'uniteDeBase')]
@@ -36,7 +30,6 @@ class Unite
 
     public function __construct()
     {
-        $this->uniteConversions = new ArrayCollection();
         $this->produits = new ArrayCollection();
     }
 
@@ -70,36 +63,6 @@ class Unite
     }
 
     /**
-     * @return Collection<int, UniteConversion>
-     */
-    public function getUniteConversions(): Collection
-    {
-        return $this->uniteConversions;
-    }
-
-    public function addUniteConversion(UniteConversion $uniteConversion): static
-    {
-        if (!$this->uniteConversions->contains($uniteConversion)) {
-            $this->uniteConversions->add($uniteConversion);
-            $uniteConversion->setUniteSource($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUniteConversion(UniteConversion $uniteConversion): static
-    {
-        if ($this->uniteConversions->removeElement($uniteConversion)) {
-            // set the owning side to null (unless already changed)
-            if ($uniteConversion->getUniteSource() === $this) {
-                $uniteConversion->setUniteSource(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Produit>
      */
     public function getProduits(): Collection
@@ -127,5 +90,10 @@ class Unite
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nom ?? '';
     }
 }

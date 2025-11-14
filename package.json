@@ -5,6 +5,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@hotwired/turbo": "^8.0.20",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "vite": "^7.1.12",

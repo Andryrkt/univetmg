@@ -18,7 +18,7 @@ final class CategorieController extends AbstractController
     public function index(CategorieRepository $categorieRepository): Response
     {
         return $this->render('produit/categorie/index.html.twig', [
-            'categories' => $categorieRepository->findAll(),
+            'categories' => $categorieRepository->findRootCategoriesWithChildren(),
         ]);
     }
 
@@ -77,5 +77,19 @@ final class CategorieController extends AbstractController
         }
 
         return $this->redirectToRoute('app_produit_categorie_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/subcategories/{id}', name: 'app_produit_subcategorie_get', methods: ['GET'])]
+    public function getSubCategories(Categorie $parent): Response
+    {
+        $subCategories = [];
+        foreach ($parent->getEnfant() as $subCategory) {
+            $subCategories[] = [
+                'id' => $subCategory->getId(),
+                'nom' => $subCategory->getNom(),
+            ];
+        }
+
+        return $this->json($subCategories);
     }
 }

@@ -45,9 +45,26 @@ class ProduitController extends AbstractController
     #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
     public function show(Produit $produit): Response
     {
+        $categoryPath = null;
+        if ($produit->getCategorie()) {
+            $categoryPath = $this->getCategoryPath($produit->getCategorie());
+        }
+
         return $this->render('produit/produit/show.html.twig', [
             'produit' => $produit,
+            'categoryPath' => $categoryPath,
         ]);
+    }
+
+    private function getCategoryPath(\App\Entity\Produit\Categorie $categorie): string
+    {
+        $path = [$categorie->getNom()];
+        $current = $categorie;
+        while ($current->getParent()) {
+            $current = $current->getParent();
+            array_unshift($path, $current->getNom());
+        }
+        return implode(' > ', $path);
     }
 
     #[Route('/{id}/edit', name: 'app_produit_edit', methods: ['GET', 'POST'])]

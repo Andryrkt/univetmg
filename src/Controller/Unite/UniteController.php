@@ -4,6 +4,8 @@ namespace App\Controller\Unite;
 
 use App\Entity\Unite\Unite;
 use App\Form\Unite\UniteType;
+use App\Repository\Unite\ConditionnementRepository;
+use App\Repository\Unite\ConversionStandardRepository;
 use App\Repository\Unite\UniteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +35,7 @@ final class UniteController extends AbstractController
             $entityManager->persist($unite);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_unite_unite_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_unite_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('unite/unite/new.html.twig', [
@@ -43,10 +45,18 @@ final class UniteController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_unite_show', methods: ['GET'])]
-    public function show(Unite $unite): Response
-    {
+    public function show(
+        Unite $unite,
+        ConditionnementRepository $conditionnementRepository,
+        ConversionStandardRepository $conversionStandardRepository
+    ): Response {
+        $conditionnements = $conditionnementRepository->findBy(['unite' => $unite]);
+        $conversions = $conversionStandardRepository->findInvolvingUnit($unite);
+
         return $this->render('unite/unite/show.html.twig', [
             'unite' => $unite,
+            'conditionnements' => $conditionnements,
+            'conversions' => $conversions,
         ]);
     }
 

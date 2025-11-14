@@ -1,6 +1,54 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <div class="text-end">
-        <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+<div class="row">
+    <div class="col-md-6">{{ form_row(form.nom) }}</div>
+    <div class="col-md-6">{{ form_row(form.code) }}</div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.categorieParent) }}
+        <div id="category-container"></div>
+        {{ form_row(form.categorie) }}
     </div>
+    <div class="col-md-6">{{ form_row(form.uniteDeBase) }}</div>
+</div>
+<div class="row">
+    <div class="col-md-6">{{ form_row(form.prixAchat) }}</div>
+    <div class="col-md-6">{{ form_row(form.prixVente) }}</div>
+</div>
+<div class="row">
+    <div class="col-md-6">{{ form_row(form.stockInitial) }}</div>
+    <div class="col-md-6">{{ form_row(form.stockMinimum) }}</div>
+</div>
+<div class="row">
+    <div class="col-md-6">{{ form_row(form.datePeremption) }}</div>
+    <div class="col-md-6">{{ form_row(form.fournisseur) }}</div>
+</div>
+
+<h3 class="mt-4">Conditionnements</h3>
+<div id="conditionnements" class="list-group" data-prototype="{{ form_widget(form.conditionnements.vars.prototype)|e('html_attr') }}" data-widget-tags="{{ '<div class="list-group-item"></div>'|e('html_attr') }}" data-widget-counter="{{ form.conditionnements|length }}">
+    {% for conditionnementForm in form.conditionnements %}
+        <div class="list-group-item">
+            {{ form_errors(conditionnementForm) }}
+            <div class="row">
+                <div class="col">{{ form_row(conditionnementForm.unite) }}</div>
+                <div class="col">{{ form_row(conditionnementForm.quantite) }}</div>
+                <div class="col-auto d-flex align-items-end">
+                    <button type="button" class="btn btn-danger remove-collection-widget">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<button type="button" class="btn btn-secondary add-collection-widget mt-2" data-list-selector="#conditionnements">Ajouter un conditionnement</button>
+<div class="text-end mt-4">
+
+	<button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+
+</div>
+
 {{ form_end(form) }}
+
+
+
+

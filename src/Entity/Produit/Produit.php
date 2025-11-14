@@ -3,8 +3,8 @@
 namespace App\Entity\Produit;
 
 use App\Entity\Admin\Fournisseur;
+use App\Entity\Unite\Conditionnement;
 use App\Entity\Unite\Unite;
-use App\Entity\Unite\UniteConversion;
 use App\Repository\Produit\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -43,10 +43,10 @@ class Produit
     private ?\DateTime $datePeremption = null;
 
     /**
-     * @var Collection<int, UniteConversion>
+     * @var Collection<int, Conditionnement>
      */
-    #[ORM\OneToMany(targetEntity: UniteConversion::class, mappedBy: 'produit')]
-    private Collection $uniteConversions;
+    #[ORM\OneToMany(targetEntity: Conditionnement::class, mappedBy: 'produit', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $conditionnements;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -60,7 +60,7 @@ class Produit
 
     public function __construct()
     {
-        $this->uniteConversions = new ArrayCollection();
+        $this->conditionnements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,29 +165,29 @@ class Produit
     }
 
     /**
-     * @return Collection<int, UniteConversion>
+     * @return Collection<int, Conditionnement>
      */
-    public function getUniteConversions(): Collection
+    public function getConditionnements(): Collection
     {
-        return $this->uniteConversions;
+        return $this->conditionnements;
     }
 
-    public function addUniteConversion(UniteConversion $uniteConversion): static
+    public function addConditionnement(Conditionnement $conditionnement): static
     {
-        if (!$this->uniteConversions->contains($uniteConversion)) {
-            $this->uniteConversions->add($uniteConversion);
-            $uniteConversion->setProduit($this);
+        if (!$this->conditionnements->contains($conditionnement)) {
+            $this->conditionnements->add($conditionnement);
+            $conditionnement->setProduit($this);
         }
 
         return $this;
     }
 
-    public function removeUniteConversion(UniteConversion $uniteConversion): static
+    public function removeConditionnement(Conditionnement $conditionnement): static
     {
-        if ($this->uniteConversions->removeElement($uniteConversion)) {
+        if ($this->conditionnements->removeElement($conditionnement)) {
             // set the owning side to null (unless already changed)
-            if ($uniteConversion->getProduit() === $this) {
-                $uniteConversion->setProduit(null);
+            if ($conditionnement->getProduit() === $this) {
+                $conditionnement->setProduit(null);
             }
         }
 
@@ -228,5 +228,10 @@ class Produit
         $this->fournisseur = $fournisseur;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nom ?? '';
     }
 }

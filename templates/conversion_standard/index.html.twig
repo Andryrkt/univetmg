@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Conversions Standard{% endblock %}
+
+{% block body %}
+    <h1>Gestion des Conversions Standard</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Unité d'Origine</th>
+                <th>Unité Cible</th>
+                <th>Facteur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for conversion_standard in conversion_standards %}
+            <tr>
+                <td>{{ conversion_standard.id }}</td>
+                <td>{{ conversion_standard.uniteOrigine.nom }}</td>
+                <td>{{ conversion_standard.uniteCible.nom }}</td>
+                <td>{{ conversion_standard.facteur }}</td>
+                <td>
+                    <a href="{{ path('app_conversion_standard_show', {'id': conversion_standard.id}) }}">Voir</a>
+                    <a href="{{ path('app_conversion_standard_edit', {'id': conversion_standard.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune conversion trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_conversion_standard_new') }}" class="btn btn-primary">Créer une nouvelle conversion</a>
+{% endblock %}

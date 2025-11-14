@@ -17,10 +17,32 @@
             <tr><th>Prix Vente</th><td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td></tr>
             <tr><th>Date Péremption</th><td>{{ produit.datePeremption ? produit.datePeremption|date('d/m/Y') : '' }}</td></tr>
             <tr><th>Fournisseur</th><td>{{ produit.fournisseur ? produit.fournisseur.nom : '' }}</td></tr>
-            <tr><th>Catégorie</th><td>{{ produit.categorie ? produit.categorie.nom : '' }}</td></tr>
+            <tr><th>Catégorie</th><td>{{ categoryPath ?? 'N/A' }}</td></tr>
             <tr><th>Unité de base</th><td>{{ produit.uniteDeBase ? produit.uniteDeBase.nom : '' }}</td></tr>
         </tbody>
     </table>
+
+    {% if produit.conditionnements is not empty %}
+        <h2 class="mt-4">Conditionnements</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Unité de Conditionnement</th>
+                    <th>Quantité (en unité de base)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conditionnement in produit.conditionnements %}
+                    <tr>
+                        <td>{{ conditionnement.unite.nom }}</td>
+                        <td>{{ conditionnement.quantite }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="mt-4">Aucun conditionnement défini pour ce produit.</p>
+    {% endif %}
 
     <div class="d-flex mt-3">
         <a href="{{ path('app_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>

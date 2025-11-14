@@ -40,4 +40,27 @@ class CategorieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findRootCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.parent IS NULL')
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Categorie[] Returns an array of root Categorie objects with their children eagerly loaded
+     */
+    public function findRootCategoriesWithChildren(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.enfant', 'e')
+            ->addSelect('e')
+            ->where('c.parent IS NULL')
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
