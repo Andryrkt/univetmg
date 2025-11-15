@@ -1,4 +1,3 @@
-
 #!/bin/bash
 set -e
 
@@ -19,14 +18,18 @@ do
         log "📥 Mise à jour du code..."
         git --work-tree="$TARGET" --git-dir="$REPO" checkout -f "$BRANCH"
 
+        cd "$TARGET" || exit 1
+
         # -------------------------------------------------------
         # Installer composer.phar si pas encore présent
         # -------------------------------------------------------
         if [ ! -f "$TARGET/composer.phar" ]; then
             log "📦 Installation Composer..."
+            cd /tmp
             php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
             php composer-setup.php --install-dir="$TARGET" --filename=composer.phar
-            rm composer-setup.php
+            rm -f composer-setup.php
+            cd "$TARGET" || exit 1
         fi
 
         # -------------------------------------------------------
