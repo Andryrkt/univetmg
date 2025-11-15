@@ -33,15 +33,18 @@ do
         fi
 
         # -------------------------------------------------------
-        # Installer les dépendances
+        # Installer les dépendances SANS les dev dependencies
         # -------------------------------------------------------
-        log "📚 Installation des dépendances..."
+        log "📚 Installation des dépendances (production)..."
         php "$TARGET/composer.phar" install --no-interaction --no-dev --optimize-autoloader --working-dir="$TARGET"
 
         # -------------------------------------------------------
-        # Clear cache Symfony
+        # Clear cache Symfony en forçant l'environnement prod
         # -------------------------------------------------------
         log "🧹 Clear cache..."
+        # Forcer l'environnement de production
+        export APP_ENV=prod
+        export APP_DEBUG=0
         php "$TARGET/bin/console" cache:clear --env=prod --no-debug
 
         # -------------------------------------------------------
