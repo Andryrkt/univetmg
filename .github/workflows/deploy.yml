@@ -1,65 +1,136 @@
-name: 🚀 Deploy to Production
+name: Deploy to Production
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    # Permet de déclencher manuellement
+
 
 jobs:
   deploy:
-    name: 🌐 Deploy to cPanel
+    name: Deploy to cPanel
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-    - name: 📥 Checkout code
+    - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: 🚀 Deploy via SSH
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Adaptez à votre version
+        extensions: mbstring, xml, bcmath, pdo_mysql, intl, gd
+        coverage: none
+        tools: composer
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: Install dependencies
+      run: |
+        composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
+
+    - name: Deploy via SSH
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
+        passphrase: ""
+        timeout: 60s
         script: |
-          echo "🔄 Mise à jour du code..."
+          set -e  # Arrête si une commande échoue
+
+          echo "Mise à jour du code..."
           cd /home/univetmg/univet
-          git pull origin main
 
-          echo "📦 Installation des dépendances..."
-          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts
+          # Sauvegarde de sécurité avant pull
+          git fetch origin main
+          git reset --hard origin/main
 
-          echo "🔄 Optimisation autoload..."
-          composer dump-autoload --optimize --no-dev
+          echo "Installation des dépendances..."
+          export COMPOSER_HOME="$HOME/.composer"
+          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
-          echo "🧹 Nettoyage du cache..."
-          rm -rf var/cache/prod
+          echo "Nettoyage du cache..."
+          rm -rf var/cache/*
           php bin/console cache:warmup --env=prod --no-debug
 
-          echo "🔐 Configuration des permissions..."
-          chmod -R 775 var
+          echo "Permissions sécurisées..."
+          find var -type f -exec chmod 664 {} \;
+          find var -type d -exec chmod 775 {} \;
+          chmod 600 .env
 
-          echo "🔗 Liaison avec public_html..."
-          # Supprimer l'ancien public_html s'il existe
+          echo "Mise à jour du lien symbolique public_html..."
+          # Backup si c'est un dossier (pas un lien)
           if [ -d ~/public_html ] && [ ! -L ~/public_html ]; then
             mv ~/public_html ~/public_html.backup.$(date +%Y%m%d_%H%M%S)
           fi
 
-          # Supprimer le lien symbolique s'il existe déjà
-          if [ -L ~/public_html ]; then
-            rm ~/public_html
-          fi
+          # Supprime l'ancien lien
+          rm -f ~/public_html
 
-          # Créer le nouveau lien symbolique
+          # Crée le nouveau lien
           ln -s /home/univetmg/univet/public ~/public_html
 
-          echo "✅ Déploiement terminé avec succès !"
+          echo "Déploiement terminé avec succès !"
+          echo "Site : https://univet.mg/"
 
-    - name: ✅ Deployment Status
+    - name: Success
       if: success()
-      run: echo "🎉 Deployment successful!"
+      run: echo "Déploiement réussi !"
 
-    - name: ❌ Deployment Failed
+    - name: Failure
       if: failure()
-      run: echo "💥 Deployment failed. Check the logs above."
+      run: echo "Échec du déploiement. Consultez les logs."
+
+    - name: Notify Discord - Success
+      if: success()
+      run: |
+        curl -X POST -H "Content-Type: application/json" \
+          -d '{
+            "username": "GitHub Actions",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [{
+              "title": "Déploiement réussi !",
+              "url": "https://github.com/${{ github.repository }}/commit/${{ github.sha }}",
+              "color": 3066993,
+              "fields": [
+                {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "Commit", "value": "`${{ github.sha }}`", "inline": true},
+                {"name": "Auteur", "value": "${{ github.actor }}", "inline": true},
+                {"name": "Message", "value": "${{ github.event.head_commit.message }}"},
+                {"name": "Site", "value": "[univet.mg](https://univet.mg/)", "inline": false}
+              ],
+              "timestamp": "${{ github.event.head_commit.timestamp }}"
+            }]
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord - Failure
+      if: failure()
+      run: |
+        curl -X POST -H "Content-Type: application/json" \
+          -d '{
+            "username": "GitHub Actions",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [{
+              "title": "Déploiement échoué !",
+              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "color": 15158332,
+              "fields": [
+                {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "Commit", "value": "`${{ github.sha }}`", "inline": true},
+                {"name": "Erreur", "value": "Voir les logs ci-dessus", "inline": false}
+              ],
+              "timestamp": "${{ github.event.head_commit.timestamp }}"
+            }]
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
