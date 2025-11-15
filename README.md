@@ -1,52 +1,53 @@
+
 #!/bin/bash
+set -e
 
-USER="univetmg"
-PROJECT_DIR="/home/$USER/univet"
-REPO_DIR="/home/$USER/repo.git"
 BRANCH="main"
-LOG_FILE="/home/$USER/deploy.log"
-
-PHP="/usr/local/bin/php"
-COMPOSER="/home/$USER/composer.phar"
-ENV="prod"
+TARGET="/home/univetmg/univet"
+REPO="/home/univetmg/repo.git"
 
 log() {
     echo "[DEPLOY] $1"
-    echo "[DEPLOY] $1" >> "$LOG_FILE"
 }
 
 while read oldrev newrev ref
 do
-    if [ "$ref" = "refs/heads/$BRANCH" ]; then
+    if [[ "$ref" = "refs/heads/$BRANCH" ]]; then
 
-        log "🚀 Déploiement de la branche $BRANCH..."
+        log "🚀 Déploiement branche $BRANCH..."
 
-        log "📥 Mise à jour du dossier de production..."
-        git --work-tree="$PROJECT_DIR" --git-dir="$REPO_DIR" checkout -f "$BRANCH"
+        log "📥 Mise à jour du code..."
+        git --work-tree="$TARGET" --git-dir="$REPO" checkout -f "$BRANCH"
 
-        if [ ! -f "$COMPOSER" ]; then
-            log "📦 Installation de Composer..."
-            curl -sS https://getcomposer.org/installer | "$PHP" -- --install-dir="/home/$USER" --filename="composer.phar"
+        # -------------------------------------------------------
+        # Installer composer.phar si pas encore présent
+        # -------------------------------------------------------
+        if [ ! -f "$TARGET/composer.phar" ]; then
+            log "📦 Installation Composer..."
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            php composer-setup.php --install-dir="$TARGET" --filename=composer.phar
+            rm composer-setup.php
         fi
 
-        log "📚 Installation des dépendances Composer..."
-        "$PHP" "$COMPOSER" install --no-dev --optimize-autoloader --no-interaction --working-dir="$PROJECT_DIR"
+        # -------------------------------------------------------
+        # Installer les dépendances
+        # -------------------------------------------------------
+        log "📚 Installation des dépendances..."
+        php "$TARGET/composer.phar" install --no-interaction --no-dev --optimize-autoloader --working-dir="$TARGET"
 
-        if [ -f "$PROJECT_DIR/package.json" ]; then
-            log "🎨 Build des assets..."
-            cd "$PROJECT_DIR"
-            npm install --silent
-            npm run build
-        fi
+        # -------------------------------------------------------
+        # Clear cache Symfony
+        # -------------------------------------------------------
+        log "🧹 Clear cache..."
+        php "$TARGET/bin/console" cache:clear --env=prod --no-debug
 
+        # -------------------------------------------------------
+        # Permissions
+        # -------------------------------------------------------
         log "🔐 Permissions..."
-        chown -R "$USER":"$USER" "$PROJECT_DIR"
-        find "$PROJECT_DIR/var" -type d -exec chmod 775 {} \;
-        find "$PROJECT_DIR/var" -type f -exec chmod 664 {} \;
+        chmod -R 775 "$TARGET/var"
+        chown -R univetmg:univetmg "$TARGET"
 
-        log "🧹 Nettoyage du cache Symfony..."
-        "$PHP" "$PROJECT_DIR/bin/console" cache:clear --env="$ENV"
-
-        log "✅ Déploiement terminé avec succès !"
+        log "✅ Déploiement terminé !"
     fi
 done
