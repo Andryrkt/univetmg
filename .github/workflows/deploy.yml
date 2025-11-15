@@ -1,0 +1,50 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Permet de déclencher manuellement
+
+jobs:
+  deploy:
+    name: 🌐 Deploy to cPanel
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🚀 Deploy via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          echo "🔄 Mise à jour du code..."
+          cd /home/univetmg/univet
+          git pull origin main
+          
+          echo "📦 Installation des dépendances..."
+          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts
+          
+          echo "🔄 Optimisation autoload..."
+          composer dump-autoload --optimize --no-dev
+          
+          echo "🧹 Nettoyage du cache..."
+          rm -rf var/cache/prod
+          php bin/console cache:warmup --env=prod --no-debug
+          
+          echo "🔐 Configuration des permissions..."
+          chmod -R 775 var
+          
+          echo "✅ Déploiement terminé avec succès !"
+          
+    - name: ✅ Deployment Status
+      if: success()
+      run: echo "🎉 Deployment successful!"
+      
+    - name: ❌ Deployment Failed
+      if: failure()
+      run: echo "💥 Deployment failed. Check the logs above."
