@@ -21,6 +21,12 @@ do
         cd "$TARGET" || exit 1
 
         # -------------------------------------------------------
+        # Forcer l'environnement AVANT tout
+        # -------------------------------------------------------
+        export APP_ENV=prod
+        export APP_DEBUG=0
+
+        # -------------------------------------------------------
         # Installer composer.phar si pas encore présent
         # -------------------------------------------------------
         if [ ! -f "$TARGET/composer.phar" ]; then
@@ -33,26 +39,41 @@ do
         fi
 
         # -------------------------------------------------------
-        # Installer les dépendances SANS les dev dependencies
+        # Installer les dépendances
         # -------------------------------------------------------
         log "📚 Installation des dépendances (production)..."
-        php "$TARGET/composer.phar" install --no-interaction --no-dev --optimize-autoloader --working-dir="$TARGET"
+        php "$TARGET/composer.phar" install \
+            --no-interaction \
+            --no-dev \
+            --optimize-autoloader \
+            --no-scripts \
+            --working-dir="$TARGET"
 
         # -------------------------------------------------------
-        # Clear cache Symfony en forçant l'environnement prod
+        # Dump autoload optimisé
+        # -------------------------------------------------------
+        log "🔄 Optimisation autoload..."
+        php "$TARGET/composer.phar" dump-autoload --optimize --no-dev --working-dir="$TARGET"
+
+        # -------------------------------------------------------
+        # Clear cache de manière sécurisée
         # -------------------------------------------------------
         log "🧹 Clear cache..."
-        # Forcer l'environnement de production
-        export APP_ENV=prod
-        export APP_DEBUG=0
-        php "$TARGET/bin/console" cache:clear --env=prod --no-debug
+        
+        # Méthode 1: Suppression manuelle
+        if [ -d "$TARGET/var/cache/prod" ]; then
+            rm -rf "$TARGET/var/cache/prod"
+        fi
+        
+        # Méthode 2: Warmup du cache (création)
+        php "$TARGET/bin/console" cache:warmup --env=prod --no-debug 2>/dev/null || log "⚠️  Cache warmup ignoré"
 
         # -------------------------------------------------------
         # Permissions
         # -------------------------------------------------------
         log "🔐 Permissions..."
-        chmod -R 775 "$TARGET/var"
-        chown -R univetmg:univetmg "$TARGET"
+        chmod -R 775 "$TARGET/var" 2>/dev/null || true
+        chown -R univetmg:univetmg "$TARGET" 2>/dev/null || true
 
         log "✅ Déploiement terminé !"
     fi
