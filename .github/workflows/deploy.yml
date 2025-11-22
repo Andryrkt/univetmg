@@ -57,41 +57,55 @@ jobs:
         debug: true
         timeout: 120s
         script: |
-          set -e
+          set -e  # Arrête à la première erreur
 
           echo "Mise à jour du code..."
-          cd /home/univetmg/univet || { echo "ERREUR: Dossier univet introuvable"; exit 1; }
+          cd /home/univetmg/univet || exit 1
 
-          git fetch origin main || { echo "ERREUR: git fetch échoué"; exit 1; }
-          git reset --hard origin/main || { echo "ERREUR: git reset échoué"; exit 1; }
+          git fetch origin main
+          git reset --hard origin/main
 
-          echo "Installation des dépendances..."
+          echo "Installation des dépendances (sans dev)..."
           export COMPOSER_HOME="$HOME/.composer"
-          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist || {
-            echo "ERREUR: composer install échoué"
-            composer diagnose
-            exit 1
-          }
+          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
-          echo "Nettoyage du cache..."
+          echo "Configuration production (.env)..."
+          # .env propre (sans secret)
+          grep -v '^#' .env > temp.env && mv temp.env .env
+          echo "APP_ENV=prod" >> .env
+          echo "APP_DEBUG=0" >> .env
+
+          # .env.local avec secret (si absent)
+          if [ ! -f .env.local ]; then
+            echo "APP_SECRET=$(openssl rand -hex 16)" > .env.local
+          fi
+          chmod 600 .env.local
+
+          echo "Désactivation des outils de dev en prod..."
+          # Bundles dev → dev/test only
+          sed -i "/MakerBundle\|FixturesBundle\|ProfilerBundle/s/=> \['all' => true\]/=> ['dev' => true, 'test' => true]/" config/bundles.php || true
+          sed -i "/MakerBundle\|FixturesBundle\|ProfilerBundle/s/=> \['dev' => true\]/&/" config/bundles.php || true
+
+          # Dés actifs profiler & routes
+          mv config/packages/web_profiler.yaml config/packages/web_profiler.yaml.disabled 2>/dev/null || true
+          mv config/routes/web_profiler.yaml config/routes/web_profiler.yaml.disabled 2>/dev/null || true
+          mv config/packages/debug.yaml config/packages/debug.yaml.disabled 2>/dev/null || true
+
+          echo "Nettoyage et réchauffement du cache..."
           rm -rf var/cache/*
-          php bin/console cache:warmup --env=prod --no-debug || {
-            echo "ERREUR: cache:warmup échoué"
-            echo "Contenu de .env :"
-            cat .env | grep -v '^#' | grep .
-            exit 1
-          }
+          php bin/console cache:warmup --env=prod --no-debug
 
-          echo "Permissions..."
+          echo "Permissions sécurisées..."
           find var -type f -exec chmod 664 {} \; 2>/dev/null || true
           find var -type d -exec chmod 775 {} \; 2>/dev/null || true
-          [ -f .env ] && chmod 600 .env
+          chmod 600 .env.local 2>/dev/null || true
 
-          echo "Lien symbolique..."
+          echo "Mise à jour du lien symbolique..."
           rm -f ~/public_html
-          ln -s /home/univetmg/univet/public ~/public_html || { echo "ERREUR: lien symbolique échoué"; exit 1; }
+          ln -s /home/univetmg/univet/public ~/public_html
 
-          echo "Déploiement terminé !
+          echo "Déploiement terminé avec succès !"
+          echo "Site : https://univet.mg/"
 
     - name: Success
       if: success()
