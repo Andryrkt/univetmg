@@ -11,6 +11,9 @@
 				<li class="nav-item">
 					<a class="nav-link" href="{{ path('app_home_public') }}">Accueil</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{{ path('app_documentation') }}">Documentation</a>
+				</li>
 
 				{# Liens pour les administrateurs #}
 				{% if is_granted('ROLE_ADMIN') %}
@@ -34,6 +37,9 @@
 							</li>
 							<li>
 								<a class="dropdown-item" href="{{ path('app_unite_index') }}">Gestion des Unites</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{{ path('app_conversion_standard_index') }}">Gestion des Conversion Standard</a>
 							</li>
 						</ul>
 					</li>

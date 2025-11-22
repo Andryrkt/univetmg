@@ -7,7 +7,8 @@
 
     {{ include('conversion_standard/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('app_conversion_standard_index') }}">Retour à la liste</a>
-
-    {{ include('conversion_standard/_delete_form.html.twig') }}
+    <div class="mt-3">
+        <a href="{{ path('app_conversion_standard_index') }}" class="btn btn-secondary">Retour à la liste</a>
+        {{ include('conversion_standard/_delete_form.html.twig') }}
+    </div>
 {% endblock %}

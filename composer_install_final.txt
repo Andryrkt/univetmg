@@ -1,0 +1,98 @@
+./composer.json has been updated
+Running composer update twig/extra-bundle twig/markdown-extra league/commonmark --with-all-dependencies
+Loading composer repositories with package information
+Restricting packages listed in "symfony/symfony" to "7.3.*"
+Updating dependencies
+Lock file operations: 7 installs, 12 updates, 0 removals
+  - Locking dflydev/dot-access-data (v3.0.3)
+  - Locking league/commonmark (2.7.1)
+  - Locking league/config (v1.2.0)
+  - Locking nette/schema (v1.3.3)
+  - Locking nette/utils (v4.0.8)
+  - Upgrading symfony/cache (v7.3.5 => v7.3.6)
+  - Upgrading symfony/config (v7.3.4 => v7.3.6)
+  - Upgrading symfony/dependency-injection (v7.3.4 => v7.3.6)
+  - Upgrading symfony/error-handler (v7.3.4 => v7.3.6)
+  - Upgrading symfony/filesystem (v7.3.2 => v7.3.6)
+  - Upgrading symfony/framework-bundle (v7.3.5 => v7.3.6)
+  - Upgrading symfony/http-foundation (v7.3.5 => v7.3.7)
+  - Upgrading symfony/http-kernel (v7.3.5 => v7.3.7)
+  - Upgrading symfony/routing (v7.3.4 => v7.3.6)
+  - Upgrading symfony/service-contracts (v3.6.0 => v3.6.1)
+  - Upgrading symfony/translation-contracts (v3.6.0 => v3.6.1)
+  - Upgrading symfony/twig-bridge (v7.3.3 => v7.3.6)
+  - Locking twig/extra-bundle (v3.22.1)
+  - Locking twig/markdown-extra (v3.22.0)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 7 installs, 12 updates, 0 removals
+  - Downloading symfony/http-foundation (v7.3.7)
+  - Downloading symfony/error-handler (v7.3.6)
+  - Downloading symfony/http-kernel (v7.3.7)
+  - Downloading symfony/service-contracts (v3.6.1)
+  - Downloading symfony/dependency-injection (v7.3.6)
+  - Downloading symfony/filesystem (v7.3.6)
+  - Downloading symfony/config (v7.3.6)
+  - Downloading symfony/routing (v7.3.6)
+  - Downloading symfony/cache (v7.3.6)
+  - Downloading symfony/framework-bundle (v7.3.6)
+  - Downloading nette/utils (v4.0.8)
+  - Downloading nette/schema (v1.3.3)
+  - Downloading dflydev/dot-access-data (v3.0.3)
+  - Downloading league/config (v1.2.0)
+  - Downloading league/commonmark (2.7.1)
+  - Downloading symfony/translation-contracts (v3.6.1)
+  - Downloading symfony/twig-bridge (v7.3.6)
+  - Downloading twig/extra-bundle (v3.22.1)
+  - Downloading twig/markdown-extra (v3.22.0)
+  0/19 [>--------]   0%
+  2/19 [>--------]  10%
+  4/19 [=>-------]  21%
+  6/19 [==>------]  31%
+  8/19 [===>-----]  42%
+ 12/19 [=====>---]  63%
+ 14/19 [======>--]  73%
+ 16/19 [=======>-]  84%
+ 19/19 [=========] 100%
+  - Upgrading symfony/http-foundation (v7.3.5 => v7.3.7): Extracting archive
+  - Upgrading symfony/error-handler (v7.3.4 => v7.3.6): Extracting archive
+  - Upgrading symfony/http-kernel (v7.3.5 => v7.3.7): Extracting archive
+  - Upgrading symfony/service-contracts (v3.6.0 => v3.6.1): Extracting archive
+  - Upgrading symfony/dependency-injection (v7.3.4 => v7.3.6): Extracting archive
+  - Upgrading symfony/filesystem (v7.3.2 => v7.3.6): Extracting archive
+  - Upgrading symfony/config (v7.3.4 => v7.3.6): Extracting archive
+  - Upgrading symfony/routing (v7.3.4 => v7.3.6): Extracting archive
+  - Upgrading symfony/cache (v7.3.5 => v7.3.6): Extracting archive
+  - Upgrading symfony/framework-bundle (v7.3.5 => v7.3.6): Extracting archive
+  - Installing nette/utils (v4.0.8): Extracting archive
+  - Installing nette/schema (v1.3.3): Extracting archive
+  - Installing dflydev/dot-access-data (v3.0.3): Extracting archive
+  - Installing league/config (v1.2.0): Extracting archive
+  - Installing league/commonmark (2.7.1): Extracting archive
+  - Upgrading symfony/translation-contracts (v3.6.0 => v3.6.1): Extracting archive
+  - Upgrading symfony/twig-bridge (v7.3.3 => v7.3.6): Extracting archive
+  - Installing twig/extra-bundle (v3.22.1): Extracting archive
+  - Installing twig/markdown-extra (v3.22.0): Extracting archive
+  0/19 [>--------]   0%
+ 10/19 [====>----]  52%
+ 17/19 [========>]  89%
+ 19/19 [=========] 100%
+Generating autoload files
+101 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+
+Symfony operations: 1 recipe (05bda0e24dad5b0d74517ca5f8a25d23)
+  - Configuring twig/extra-bundle (>=v3.22.1): From auto-generated recipe
+Executing script cache:clear [OK]
+Executing script assets:install public [OK]
+              
+ What's next? 
+              
+
+Some files have been created and/or updated to configure your new packages.
+Please review, edit and commit them: these files are yours.
+
+No security vulnerability advisories found.
+Using version ^3.22 for twig/extra-bundle
+Using version ^3.22 for twig/markdown-extra
+Using version ^2.7 for league/commonmark

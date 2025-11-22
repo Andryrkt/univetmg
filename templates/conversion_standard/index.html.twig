@@ -3,16 +3,19 @@
 {% block title %}Gestion des Conversions Standard{% endblock %}
 
 {% block body %}
-    <h1>Gestion des Conversions Standard</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Gestion des Conversions Standard</h1>
+        <a href="{{ path('app_conversion_standard_new') }}" class="btn btn-primary">Créer une nouvelle conversion</a>
+    </div>
 
-    <table class="table">
-        <thead>
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-light">
             <tr>
                 <th>ID</th>
                 <th>Unité d'Origine</th>
                 <th>Unité Cible</th>
                 <th>Facteur</th>
-                <th>Actions</th>
+                <th class="text-end">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -22,18 +25,18 @@
                 <td>{{ conversion_standard.uniteOrigine.nom }}</td>
                 <td>{{ conversion_standard.uniteCible.nom }}</td>
                 <td>{{ conversion_standard.facteur }}</td>
-                <td>
-                    <a href="{{ path('app_conversion_standard_show', {'id': conversion_standard.id}) }}">Voir</a>
-                    <a href="{{ path('app_conversion_standard_edit', {'id': conversion_standard.id}) }}">Modifier</a>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ path('app_conversion_standard_show', {'id': conversion_standard.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                        <a href="{{ path('app_conversion_standard_edit', {'id': conversion_standard.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                    </div>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">Aucune conversion trouvée</td>
+                <td colspan="5" class="text-center">Aucune conversion trouvée</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('app_conversion_standard_new') }}" class="btn btn-primary">Créer une nouvelle conversion</a>
 {% endblock %}

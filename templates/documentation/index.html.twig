@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Documentation{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Documentation des Entités</h1>
+    <div class="markdown-body">
+        {{ content|markdown_to_html }}
+    </div>
+</div>
+{% endblock %}

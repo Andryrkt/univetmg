@@ -1,0 +1,13 @@
+./composer.json has been updated
+Running composer update twig/extra-bundle twig/markdown-extra league/commonmark --with-all-dependencies
+Loading composer repositories with package information
+Restricting packages listed in "symfony/symfony" to "7.3.*"
+Updating dependencies
+Your requirements could not be resolved to an installable set of packages.
+
+  Problem 1
+    - Root composer.json requires phpunit/phpunit ^11.0, found phpunit/phpunit[11.0.0, ..., 11.5.44] but the package is fixed to 12.4.2 (lock file version) by a partial update and that version does not match. Make sure you list it as an argument for the update command.
+
+You can also try re-running composer require with an explicit version constraint, e.g. "composer require twig/extra-bundle:*" to figure out if any version is installable, or "composer require twig/extra-bundle:^2.1" if you know which you need.
+
+Installation failed, reverting ./composer.json and ./composer.lock to their original content.
