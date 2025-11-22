@@ -1,0 +1,50 @@
+﻿   > purging database
+   > loading App\DataFixtures\CategorieFixtures
+   > loading App\DataFixtures\UniteFixtures
+   > loading App\DataFixtures\FournisseurFixtures
+   > loading App\DataFixtures\UserFixtures
+   > loading App\DataFixtures\ConversionStandardFixtures
+   > loading App\DataFixtures\ProduitFixtures
+php : 
+Au caractère Ligne:1 
+: 1
++ php bin/console doct
+rine:fixtures:load 
+--no-interaction 2>&1 
+| Out-Fi ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (:String) [   
+ ], RemoteExceptio    
+n
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+In 
+ProduitFixtures.php 
+line 119:
+                      
+  Attempted to load   
+  class "UniteConver  
+  sion" from namespa  
+  ce "App\Entity\Uni  
+  te".                
+  Did you forget a "  
+  use" statement for  
+   another namespace  
+  ?                   
+                      
+
+doctrine:fixtures:load
+ [--append] 
+[--dry-run] [--group 
+GROUP] [--em EM] 
+[--purger PURGER] 
+[--purge-exclusions 
+PURGE-EXCLUSIONS] [--p
+urge-with-truncate]
+

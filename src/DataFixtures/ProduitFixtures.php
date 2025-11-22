@@ -6,7 +6,7 @@ use App\Entity\Produit\Produit;
 use App\Entity\Admin\Fournisseur;
 use App\Entity\Produit\Categorie;
 use App\Entity\Unite\Unite;
-use App\Entity\Unite\UniteConversion;
+use App\Entity\Unite\Conditionnement;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -57,7 +57,7 @@ class ProduitFixtures extends Fixture implements DependentFixtureInterface
         // Récupération des unités selon le format de UniteFixtures
         $unites = [];
         $uniteReferences = [
-            'mg', 'g', 'kg', 'ml', 'l', 'u', 'cp', 'gél', 'pip', 'sachet', 'flacon', 'boîte', 'tube', 'spray'
+            'mg', 'g', 'kg', 'ml', 'cl', 'l', 'u', 'cp', 'gél', 'pip', 'sachet', 'flacon', 'boîte', 'tube', 'spray'
         ];
 
         foreach ($uniteReferences as $refName) {
@@ -107,21 +107,20 @@ class ProduitFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($produit);
 
-            // Créer des conversions d'unités
+            // Créer des conditionnements
             $otherUnits = array_filter($unites, fn($u) => $u !== $baseUnit);
             if (!empty($otherUnits)) {
-                $numberOfConversions = $faker->numberBetween(0, min(2, count($otherUnits)));
+                $numberOfConditionnements = $faker->numberBetween(0, min(2, count($otherUnits)));
                 
-                if ($numberOfConversions > 0) {
-                    $chosenUnits = $faker->randomElements($otherUnits, $numberOfConversions);
+                if ($numberOfConditionnements > 0) {
+                    $chosenUnits = $faker->randomElements($otherUnits, $numberOfConditionnements);
 
                     foreach ($chosenUnits as $targetUnit) {
-                        $conversion = new UniteConversion();
-                        $conversion->setProduit($produit);
-                        $conversion->setUniteSource($baseUnit);
-                        $conversion->setUniteCible($targetUnit);
-                        $conversion->setFacteur($faker->randomFloat(2, 0.1, 10));
-                        $manager->persist($conversion);
+                        $conditionnement = new Conditionnement();
+                        $conditionnement->setProduit($produit);
+                        $conditionnement->setUnite($targetUnit);
+                        $conditionnement->setQuantite($faker->numberBetween(1, 100));
+                        $manager->persist($conditionnement);
                     }
                 }
             }
@@ -138,6 +137,7 @@ class ProduitFixtures extends Fixture implements DependentFixtureInterface
         return [
             CategorieFixtures::class,
             UniteFixtures::class,
+            ConversionStandardFixtures::class,
             FournisseurFixtures::class,
             UserFixtures::class,
         ];

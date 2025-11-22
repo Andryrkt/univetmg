@@ -17,6 +17,7 @@ class UniteFixtures extends Fixture
             ['nom' => 'Gramme', 'symbole' => 'g'],
             ['nom' => 'Kilogramme', 'symbole' => 'kg'],
             ['nom' => 'Millilitre', 'symbole' => 'ml'],
+            ['nom' => 'Centilitre', 'symbole' => 'cl'],
             ['nom' => 'Litre', 'symbole' => 'L'],
             ['nom' => 'Unité', 'symbole' => 'U'],
             ['nom' => 'Comprimé', 'symbole' => 'cp'],
