@@ -77,12 +77,16 @@ jobs:
           if [ ! -f .env.local ]; then
             echo "APP_SECRET=$(openssl rand -hex 16)" > .env.local
           fi
+          
+          # Force APP_ENV=prod dans .env.local
+          if grep -q "^APP_ENV=" .env.local; then
+            sed -i 's/^APP_ENV=.*/APP_ENV=prod/' .env.local
+          else
+            echo "APP_ENV=prod" >> .env.local
+          fi
           chmod 600 .env.local
 
-          echo "Désactivation des outils de dev en prod..."
-          # Bundles dev → dev/test only
-          sed -i "/MakerBundle\|FixturesBundle\|ProfilerBundle/s/=> \['all' => true\]/=> ['dev' => true, 'test' => true]/" config/bundles.php || true
-          sed -i "/MakerBundle\|FixturesBundle\|ProfilerBundle/s/=> \['dev' => true\]/&/" config/bundles.php || true
+
 
           # Dés actifs profiler & routes
           mv config/packages/web_profiler.yaml config/packages/web_profiler.yaml.disabled 2>/dev/null || true
