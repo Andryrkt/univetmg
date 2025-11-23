@@ -56,6 +56,12 @@ jobs:
 
           git fetch origin main
           git reset --hard origin/main
+          
+          echo "Commit déployé :"
+          git rev-parse HEAD
+          
+          echo "Forçage du timestamp pour index.php..."
+          touch public/index.php
 
           echo "Installation des dépendances (sans dev)..."
           export COMPOSER_HOME="$HOME/.composer"
