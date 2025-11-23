@@ -5,7 +5,7 @@
 /config/secrets/prod/prod.*
 /var/
 /vendor/
-composer.lock
+
 /tests/
 ###< symfony/framework-bundle ###
 

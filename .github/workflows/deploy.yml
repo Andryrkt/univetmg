@@ -65,6 +65,7 @@ jobs:
 
           echo "Installation des dépendances (sans dev)..."
           export COMPOSER_HOME="$HOME/.composer"
+          rm -rf vendor
           composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
           echo "Configuration production (.env)..."
