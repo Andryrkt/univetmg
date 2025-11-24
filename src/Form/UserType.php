@@ -34,8 +34,15 @@ class UserType extends AbstractType
                 'label' => 'Mot de passe',
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
-                'required' => false, // Le mot de passe est optionnel lors de la modification
-                'constraints' => [
+                'required' => $options['require_password'], // Le mot de passe est optionnel lors de la modification
+                'constraints' => $options['require_password'] ? [
+                    new NotBlank(['message' => 'Veuillez entrer un mot de passe']),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                        'max' => 4096,
+                    ]),
+                ] : [
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
@@ -54,6 +61,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'require_password' => false,
         ]);
     }
 }

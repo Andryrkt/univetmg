@@ -28,10 +28,7 @@ class UserController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        // Le mot de passe est obligatoire à la création
-        $form->get('plainPassword')->setRequired(true);
-        $form->get('plainPassword')->addConstraint(new NotBlank(['message' => 'Veuillez entrer un mot de passe']));
+        $form = $this->createForm(UserType::class, $user, ['require_password' => true]);
 
         $form->handleRequest($request);
 
