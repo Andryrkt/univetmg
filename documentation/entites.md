@@ -10,7 +10,7 @@ Pour initialiser correctement la base de données, il est important de respecter
 
 1.  **Unités (`Unite\Unite`)** : Commencez par définir les unités de base (ex: Kilogramme, Litre, Pièce). Elles sont utilisées partout.
 2.  **Catégories (`Produit\Categorie`)** et **Fournisseurs (`Admin\Fournisseur`)** : Créez ensuite les catégories de produits et les fournisseurs. Ce sont des référentiels nécessaires pour créer un produit.
-3.  **Produits (`Produit\Produit`)** : Une fois les unités, catégories et fournisseurs existants, vous pouvez créer les produits.
+3.  **Produits (`Produit\Produit`)** : Une fois les unités, catégories et fournisseurs existants, vous pouvez créer les produits. (pour l'unité de base mettre l'unité la plus petite. Exemple = comprimé)
 4.  **Conditionnements (`Unite\Conditionnement`)** et **Conversions (`Unite\ConversionStandard`)** : Enfin, définissez les conditionnements spécifiques (ex: Pack de 6) et les règles de conversion si nécessaire.
 
 ---
