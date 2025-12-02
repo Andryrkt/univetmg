@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des Mouvements{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-history"></i> Historique des Mouvements</h1>
+        <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Stock Avant</th>
+                            <th>Stock Après</th>
+                            <th>Référence</th>
+                            <th>Motif</th>
+                            <th>Utilisateur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mouvement in mouvements %}
+                            <tr>
+                                <td>{{ mouvement.dateCreation|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ mouvement.type.badgeClass }}">
+                                        {{ mouvement.type.label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_stock_produit_historique', {id: mouvement.produit.id}) }}">
+                                        {{ mouvement.produit.nom }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if mouvement.type.value == 'sortie' %}
+                                        <span class="text-danger">-{{ mouvement.quantite|number_format(2, ',', ' ') }}</span>
+                                    {% else %}
+                                        <span class="text-success">+{{ mouvement.quantite|number_format(2, ',', ' ') }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ mouvement.stockAvant|number_format(2, ',', ' ') }}</td>
+                                <td>
+                                    <strong>{{ mouvement.stockApres|number_format(2, ',', ' ') }}</strong>
+                                </td>
+                                <td>{{ mouvement.reference ?? '-' }}</td>
+                                <td>
+                                    <small>{{ mouvement.motif ?? '-' }}</small>
+                                </td>
+                                <td>
+                                    <small>{{ mouvement.user.email }}</small>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted">
+                                    <i class="fas fa-inbox"></i> Aucun mouvement enregistré
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

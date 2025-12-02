@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de Stock{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-boxes"></i> Gestion de Stock</h1>
+        <div>
+            <a href="{{ path('app_stock_dashboard') }}" class="btn btn-info">
+                <i class="fas fa-chart-line"></i> Tableau de bord
+            </a>
+            <a href="{{ path('app_stock_entree') }}" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Entrée
+            </a>
+            <a href="{{ path('app_stock_sortie') }}" class="btn btn-danger">
+                <i class="fas fa-minus-circle"></i> Sortie
+            </a>
+            <a href="{{ path('app_stock_mouvements') }}" class="btn btn-secondary">
+                <i class="fas fa-history"></i> Historique
+            </a>
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">État des Stocks</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Produit</th>
+                            <th>Catégorie</th>
+                            <th>Unité</th>
+                            <th>Stock Actuel</th>
+                            <th>Stock Minimum</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in stocksData %}
+                            <tr class="{% if data.statut == 'rupture' %}table-danger{% elseif data.statut == 'alerte' %}table-warning{% endif %}">
+                                <td>{{ data.produit.code }}</td>
+                                <td>
+                                    <strong>{{ data.produit.nom }}</strong>
+                                    {% if data.produit.description %}
+                                        <br><small class="text-muted">{{ data.produit.description }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ data.produit.categorie ? data.produit.categorie.nom : '-' }}</td>
+                                <td>{{ data.produit.uniteDeBase.nom }}</td>
+                                <td>
+                                    <strong class="text-{{ data.badge }}">
+                                        {{ data.stockActuel|number_format(2, ',', ' ') }}
+                                    </strong>
+                                </td>
+                                <td>{{ data.stockMinimum|number_format(2, ',', ' ') }}</td>
+                                <td>
+                                    {% if data.statut == 'rupture' %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle"></i> Rupture
+                                        </span>
+                                    {% elseif data.statut == 'alerte' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-exclamation-circle"></i> Alerte
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle"></i> OK
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ path('app_stock_produit_historique', {id: data.produit.id}) }}" 
+                                           class="btn btn-outline-primary" 
+                                           title="Historique">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                        <a href="{{ path('app_stock_entree') }}" 
+                                           class="btn btn-outline-success" 
+                                           title="Entrée">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <a href="{{ path('app_stock_sortie') }}" 
+                                           class="btn btn-outline-danger" 
+                                           title="Sortie">
+                                            <i class="fas fa-minus"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">
+                                    <i class="fas fa-inbox"></i> Aucun produit trouvé
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

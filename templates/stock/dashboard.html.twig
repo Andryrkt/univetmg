@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Stock{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-line"></i> Tableau de Bord Stock</h1>
+        <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    {# Statistiques globales #}
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-exclamation-triangle"></i> Produits en Rupture
+                    </h5>
+                    <h2>{{ produitsEnRupture|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-shopping-cart"></i> Produits à Commander
+                    </h5>
+                    <h2>{{ produitsACommander|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-coins"></i> Valeur Totale du Stock
+                    </h5>
+                    <h2>{{ valeurStock.valeurTotale|number_format(0, ',', ' ') }} Ar</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Produits en rupture #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Produits en Rupture
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if produitsEnRupture %}
+                        <ul class="list-group">
+                            {% for produit in produitsEnRupture %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <strong>{{ produit.nom }}</strong>
+                                        <br><small class="text-muted">{{ produit.code }}</small>
+                                    </span>
+                                    <a href="{{ path('app_stock_entree') }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-plus"></i> Approvisionner
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-check-circle"></i> Aucun produit en rupture
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Produits à commander #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shopping-cart"></i> Produits à Commander
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if produitsACommander %}
+                        <ul class="list-group">
+                            {% for data in produitsACommander %}
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ data.produit.nom }}</strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                Stock actuel: {{ data.stockActuel|number_format(2, ',', ' ') }} /
+                                                Minimum: {{ data.stockMinimum|number_format(2, ',', ' ') }}
+                                            </small>
+                                            <br>
+                                            <small class="text-danger">
+                                                <i class="fas fa-arrow-down"></i>
+                                                Manquant: {{ data.manquant|number_format(2, ',', ' ') }}
+                                            </small>
+                                        </div>
+                                        <a href="{{ path('app_stock_entree') }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-plus"></i> Commander
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-check-circle"></i> Tous les stocks sont suffisants
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Mouvements récents #}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-clock"></i> Mouvements Récents
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Utilisateur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mouvement in mouvementsRecents %}
+                            <tr>
+                                <td>{{ mouvement.dateCreation|date('d/m H:i') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ mouvement.type.badgeClass }}">
+                                        {{ mouvement.type.label }}
+                                    </span>
+                                </td>
+                                <td>{{ mouvement.produit.nom }}</td>
+                                <td>
+                                    {% if mouvement.type.value == 'sortie' %}
+                                        <span class="text-danger">-{{ mouvement.quantite|number_format(2, ',', ' ') }}</span>
+                                    {% else %}
+                                        <span class="text-success">+{{ mouvement.quantite|number_format(2, ',', ' ') }}</span>
+                                    {% endif %}
+                                </td>
+                                <td><small>{{ mouvement.user.email }}</small></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    Aucun mouvement récent
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ path('app_stock_mouvements') }}" class="btn btn-sm btn-outline-primary">
+                    Voir tout l'historique <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Entity\Produit;
 
 use App\Entity\Admin\Fournisseur;
+use App\Entity\Stock\MouvementStock;
 use App\Entity\Unite\Conditionnement;
 use App\Entity\Unite\Unite;
 use App\Repository\Produit\ProduitRepository;
@@ -58,9 +59,16 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Fournisseur $fournisseur = null;
 
+    /**
+     * @var Collection<int, MouvementStock>
+     */
+    #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'produit', orphanRemoval: true)]
+    private Collection $mouvementsStock;
+
     public function __construct()
     {
         $this->conditionnements = new ArrayCollection();
+        $this->mouvementsStock = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -226,6 +234,36 @@ class Produit
     public function setFournisseur(?Fournisseur $fournisseur): static
     {
         $this->fournisseur = $fournisseur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MouvementStock>
+     */
+    public function getMouvementsStock(): Collection
+    {
+        return $this->mouvementsStock;
+    }
+
+    public function addMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if (!$this->mouvementsStock->contains($mouvementStock)) {
+            $this->mouvementsStock->add($mouvementStock);
+            $mouvementStock->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if ($this->mouvementsStock->removeElement($mouvementStock)) {
+            // set the owning side to null (unless already changed)
+            if ($mouvementStock->getProduit() === $this) {
+                $mouvementStock->setProduit(null);
+            }
+        }
 
         return $this;
     }
