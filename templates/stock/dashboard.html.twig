@@ -13,7 +13,7 @@
 
     {# Statistiques globales #}
     <div class="row mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card bg-danger text-white">
                 <div class="card-body">
                     <h5 class="card-title">
@@ -23,7 +23,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card bg-warning text-dark">
                 <div class="card-body">
                     <h5 class="card-title">
@@ -33,7 +33,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card bg-dark text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-times-circle"></i> Produits Périmés
+                    </h5>
+                    <h2>{{ produitsPerimes|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <h5 class="card-title">
@@ -115,6 +125,89 @@
                     {% else %}
                         <p class="text-muted text-center mb-0">
                             <i class="fas fa-check-circle"></i> Tous les stocks sont suffisants
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Produits périmés #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-times-circle"></i> Produits Périmés
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if produitsPerimes %}
+                        <ul class="list-group">
+                            {% for data in produitsPerimes %}
+                                <li class="list-group-item list-group-item-danger">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ data.produit.nom }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ data.produit.code }}</small>
+                                            <br>
+                                            <small class="text-danger">
+                                                <i class="fas fa-calendar-times"></i>
+                                                Périmé le {{ data.datePeremption|date('d/m/Y') }}
+                                                ({{ data.joursDepuisPeremption }} jour(s))
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-circle"></i> URGENT
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-check-circle"></i> Aucun produit périmé
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Produits proches de la péremption #}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock"></i> Produits Proches de la Péremption
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if produitsProchesPeremption %}
+                        <ul class="list-group">
+                            {% for data in produitsProchesPeremption %}
+                                <li class="list-group-item list-group-item-warning">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ data.produit.nom }}</strong>
+                                            <br>
+                                            <small class="text-muted">{{ data.produit.code }}</small>
+                                            <br>
+                                            <small class="text-warning">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                Péremption le {{ data.datePeremption|date('d/m/Y') }}
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-hourglass-half"></i> {{ data.joursRestants }} jour(s)
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-check-circle"></i> Aucun produit proche de la péremption
                         </p>
                     {% endif %}
                 </div>

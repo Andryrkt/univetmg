@@ -33,8 +33,9 @@ class StockController extends AbstractController
         foreach ($produits as $produit) {
             $stockActuel = $this->stockManager->getStockActuel($produit);
             $stockMinimum = $produit->getStockMinimum();
+            $datePeremption = $produit->getDatePeremption();
             
-            // Déterminer le statut
+            // Déterminer le statut du stock
             if ($stockActuel <= 0) {
                 $statut = 'rupture';
                 $badge = 'danger';
@@ -46,12 +47,42 @@ class StockController extends AbstractController
                 $badge = 'success';
             }
 
+            // Déterminer le statut de péremption
+            $statutPeremption = null;
+            $badgePeremption = 'secondary';
+            $joursRestants = null;
+            
+            if ($datePeremption) {
+                $aujourdhui = new \DateTime();
+                if ($datePeremption < $aujourdhui) {
+                    $statutPeremption = 'perime';
+                    $badgePeremption = 'danger';
+                    $interval = $aujourdhui->diff($datePeremption);
+                    $joursRestants = -$interval->days; // Négatif car périmé
+                } else {
+                    $interval = $aujourdhui->diff($datePeremption);
+                    $joursRestants = $interval->days;
+                    
+                    if ($joursRestants <= 30) {
+                        $statutPeremption = 'proche_peremption';
+                        $badgePeremption = 'warning';
+                    } else {
+                        $statutPeremption = 'ok';
+                        $badgePeremption = 'success';
+                    }
+                }
+            }
+
             $stocksData[] = [
                 'produit' => $produit,
                 'stockActuel' => $stockActuel,
                 'stockMinimum' => $stockMinimum,
                 'statut' => $statut,
                 'badge' => $badge,
+                'datePeremption' => $datePeremption,
+                'statutPeremption' => $statutPeremption,
+                'badgePeremption' => $badgePeremption,
+                'joursRestants' => $joursRestants,
             ];
         }
 
@@ -67,12 +98,16 @@ class StockController extends AbstractController
         $produitsACommander = $this->stockManager->getProduitsACommander();
         $valeurStock = $this->stockManager->calculerValeurStock();
         $mouvementsRecents = $this->mouvementStockRepository->findRecent(10);
+        $produitsPerimes = $this->stockManager->getProduitsPerimes();
+        $produitsProchesPeremption = $this->stockManager->getProduitsProchesPeremption();
 
         return $this->render('stock/dashboard.html.twig', [
             'produitsEnRupture' => $produitsEnRupture,
             'produitsACommander' => $produitsACommander,
             'valeurStock' => $valeurStock,
             'mouvementsRecents' => $mouvementsRecents,
+            'produitsPerimes' => $produitsPerimes,
+            'produitsProchesPeremption' => $produitsProchesPeremption,
         ]);
     }
 

@@ -211,6 +211,61 @@ class StockManager
     }
 
     /**
+     * Récupère les produits périmés
+     *
+     * @return array<array{produit: Produit, datePeremption: \DateTime, joursDepuisPeremption: int}>
+     */
+    public function getProduitsPerimes(): array
+    {
+        $produits = $this->produitRepository->findAll();
+        $produitsPerimes = [];
+        $aujourdhui = new \DateTime();
+
+        foreach ($produits as $produit) {
+            $datePeremption = $produit->getDatePeremption();
+            if ($datePeremption && $datePeremption < $aujourdhui) {
+                $interval = $aujourdhui->diff($datePeremption);
+                $produitsPerimes[] = [
+                    'produit' => $produit,
+                    'datePeremption' => $datePeremption,
+                    'joursDepuisPeremption' => $interval->days
+                ];
+            }
+        }
+
+        return $produitsPerimes;
+    }
+
+    /**
+     * Récupère les produits proches de la péremption
+     *
+     * @param int $joursAvant Nombre de jours avant la péremption pour déclencher l'alerte (défaut: 30)
+     * @return array<array{produit: Produit, datePeremption: \DateTime, joursRestants: int}>
+     */
+    public function getProduitsProchesPeremption(int $joursAvant = 30): array
+    {
+        $produits = $this->produitRepository->findAll();
+        $produitsProches = [];
+        $aujourdhui = new \DateTime();
+        $dateLimit = (clone $aujourdhui)->modify("+{$joursAvant} days");
+
+        foreach ($produits as $produit) {
+            $datePeremption = $produit->getDatePeremption();
+            // Produit proche de la péremption : date entre aujourd'hui et la date limite
+            if ($datePeremption && $datePeremption > $aujourdhui && $datePeremption <= $dateLimit) {
+                $interval = $aujourdhui->diff($datePeremption);
+                $produitsProches[] = [
+                    'produit' => $produit,
+                    'datePeremption' => $datePeremption,
+                    'joursRestants' => $interval->days
+                ];
+            }
+        }
+
+        return $produitsProches;
+    }
+
+    /**
      * Méthode privée pour créer un mouvement de stock
      */
     private function creerMouvement(

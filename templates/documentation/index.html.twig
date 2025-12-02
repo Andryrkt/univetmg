@@ -1,12 +1,169 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Documentation{% endblock %}
+{% block title %}{{ currentTitle }} - Documentation{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Documentation des Entités</h1>
-    <div class="markdown-body">
-        {{ content|markdown_to_html }}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3 col-lg-2">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-book"></i> Documentation</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for categoryKey, category in documentations %}
+                        {# En-tête de catégorie #}
+                        <div class="list-group-item bg-light border-0 py-2">
+                            <small class="text-muted fw-bold text-uppercase">
+                                <i class="fas {{ category.icon }} me-1"></i>
+                                {{ category.label }}
+                            </small>
+                        </div>
+                        
+                        {# Items de la catégorie #}
+                        {% for slug, doc in category.items %}
+                            <a href="{{ path('app_documentation', {slug: slug}) }}" 
+                               class="list-group-item list-group-item-action {{ currentDoc == slug ? 'active' : '' }}"
+                               title="{{ doc.description }}">
+                                <i class="fas {{ doc.icon }} me-2"></i>
+                                <span>{{ doc.title }}</span>
+                            </a>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    {% set categoryData = documentations[currentCategory] %}
+                    <span class="badge bg-{{ categoryData.color }} me-2">
+                        <i class="fas {{ categoryData.icon }}"></i>
+                        {{ categoryData.label }}
+                    </span>
+                    <h1 class="h3 mb-0">{{ currentTitle }}</h1>
+                </div>
+                <div class="card-body">
+                    <div class="markdown-body">
+                        {{ content|markdown_to_html }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .markdown-body {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .markdown-body h1 {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0.3em;
+        margin-top: 1.5em;
+        margin-bottom: 1em;
+    }
+    
+    .markdown-body h2 {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 0.3em;
+        margin-top: 1.5em;
+        margin-bottom: 1em;
+    }
+    
+    .markdown-body h3 {
+        margin-top: 1.5em;
+        margin-bottom: 0.75em;
+    }
+    
+    .markdown-body table {
+        width: 100%;
+        margin-bottom: 1rem;
+        border-collapse: collapse;
+    }
+    
+    .markdown-body table th,
+    .markdown-body table td {
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+    }
+    
+    .markdown-body table thead th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .markdown-body table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .markdown-body code {
+        background-color: #f8f9fa;
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-size: 0.9em;
+    }
+    
+    .markdown-body pre {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+    }
+    
+    .markdown-body pre code {
+        background-color: transparent;
+        padding: 0;
+    }
+    
+    .markdown-body blockquote {
+        border-left: 4px solid #0d6efd;
+        padding-left: 1rem;
+        margin-left: 0;
+        color: #6c757d;
+    }
+    
+    .markdown-body ul, 
+    .markdown-body ol {
+        padding-left: 2rem;
+    }
+    
+    .markdown-body li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .list-group-item.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .sticky-top {
+        position: sticky;
+        z-index: 1020;
+    }
+    
+    /* Styles pour les catégories */
+    .list-group-item.bg-light {
+        font-weight: 600;
+        padding-top: 0.75rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .list-group-item.bg-light:first-child {
+        padding-top: 0.5rem;
+    }
+    
+    /* Amélioration du badge de catégorie */
+    .card-header .badge {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.65rem;
+    }
+</style>
 {% endblock %}
+
+
