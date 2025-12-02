@@ -68,31 +68,36 @@ jobs:
           rm -rf vendor
           composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
-          echo "Configuration production (.env)..."
-          # .env propre (sans secret)
-          grep -v '^#' .env > temp.env && mv temp.env .env
-          echo "APP_ENV=prod" >> .env
-          echo "APP_DEBUG=0" >> .env
-
-          # .env.local avec secret (si absent)
+          echo "Configuration production (.env.local)..."
+          # Création ou mise à jour de .env.local avec les variables de production
           if [ ! -f .env.local ]; then
             echo "APP_SECRET=$(openssl rand -hex 16)" > .env.local
           fi
           
-          # Force APP_ENV=prod dans .env.local
+          # Force APP_ENV=prod et APP_DEBUG=0 dans .env.local
           if grep -q "^APP_ENV=" .env.local; then
             sed -i 's/^APP_ENV=.*/APP_ENV=prod/' .env.local
           else
             echo "APP_ENV=prod" >> .env.local
           fi
+          
+          if grep -q "^APP_DEBUG=" .env.local; then
+            sed -i 's/^APP_DEBUG=.*/APP_DEBUG=0/' .env.local
+          else
+            echo "APP_DEBUG=0" >> .env.local
+          fi
+          
           chmod 600 .env.local
 
 
 
-          # Dés actifs profiler & routes
+          # Désactivation du profiler & routes de debug
           mv config/packages/web_profiler.yaml config/packages/web_profiler.yaml.disabled 2>/dev/null || true
           mv config/routes/web_profiler.yaml config/routes/web_profiler.yaml.disabled 2>/dev/null || true
           mv config/packages/debug.yaml config/packages/debug.yaml.disabled 2>/dev/null || true
+
+          echo "Exécution des migrations de base de données..."
+          php bin/console doctrine:migrations:migrate --no-interaction --env=prod --no-debug || true
 
           echo "Nettoyage et réchauffement du cache..."
           rm -rf var/cache/*
@@ -143,12 +148,6 @@ jobs:
     - name: Notify Discord - Failure
       if: failure()
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        LOG_URL="https://univet.mg/var/log/prod.log"
-        SSH_LOGS=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "tail -n 20 /home/univetmg/univet/var/log/prod.log 2>/dev/null || echo 'Pas de log Symfony'")
-
         curl -X POST -H "Content-Type: application/json" \
           -d '{
             "username": "GitHub Actions",
@@ -159,8 +158,9 @@ jobs:
               "fields": [
                 {"name": "Branch", "value": "${{ github.ref_name }}", "inline": true},
                 {"name": "Commit", "value": "`${{ github.sha }}`", "inline": true},
-                {"name": "Erreur probable", "value": "Voir logs GitHub", "inline": false},
-                {"name": "Dernières lignes de log Symfony", "value": "```'\"$SSH_LOGS\"'```", "inline": false}
+                {"name": "Auteur", "value": "${{ github.actor }}", "inline": true},
+                {"name": "Message", "value": "${{ github.event.head_commit.message }}"},
+                {"name": "Action", "value": "Consultez les logs GitHub et Symfony pour plus de détails", "inline": false}
               ]
             }]
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
