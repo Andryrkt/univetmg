@@ -68,26 +68,17 @@ jobs:
           rm -rf vendor
           composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
-          echo "Configuration production (.env.local)..."
-          # Création ou mise à jour de .env.local avec les variables de production
+          echo "Configuration production..."
+          # Création de .env.local avec APP_SECRET si inexistant
           if [ ! -f .env.local ]; then
             echo "APP_SECRET=$(openssl rand -hex 16)" > .env.local
           fi
           
-          # Force APP_ENV=prod et APP_DEBUG=0 dans .env.local
-          if grep -q "^APP_ENV=" .env.local; then
-            sed -i 's/^APP_ENV=.*/APP_ENV=prod/' .env.local
-          else
-            echo "APP_ENV=prod" >> .env.local
-          fi
+          # Compilation des variables d'environnement pour la prod
+          # Cela génère .env.local.php et force APP_ENV=prod
+          composer dump-env prod
           
-          if grep -q "^APP_DEBUG=" .env.local; then
-            sed -i 's/^APP_DEBUG=.*/APP_DEBUG=0/' .env.local
-          else
-            echo "APP_DEBUG=0" >> .env.local
-          fi
-          
-          chmod 600 .env.local
+          chmod 600 .env.local .env.local.php
 
 
 
