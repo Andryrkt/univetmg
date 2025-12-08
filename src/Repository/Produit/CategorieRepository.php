@@ -45,7 +45,7 @@ class CategorieRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->where('c.parent IS NULL')
-            ->orderBy('c.nom', 'ASC')
+            ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -59,7 +59,7 @@ class CategorieRepository extends ServiceEntityRepository
             ->leftJoin('c.enfant', 'e')
             ->addSelect('e')
             ->where('c.parent IS NULL')
-            ->orderBy('c.nom', 'ASC')
+            ->orderBy('c.id', 'DESC')
             ->getQuery()
             ->getResult();
     }

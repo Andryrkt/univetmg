@@ -19,6 +19,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use App\Entity\Admin\Fournisseur;
 
 class ProduitType extends AbstractType
 {
@@ -32,8 +34,20 @@ class ProduitType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom', TextType::class)
-            ->add('code', TextType::class, ['required' => false])
+            ->add('nom', TextType::class, [
+                'required' => true,
+                'label' => 'Nom *',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('code', TextType::class, [
+                'required' => false,
+                'label' => 'Code *',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
             ->add('categorieParent', EntityType::class, [
                 'class' => Categorie::class,
                 'choices' => $this->categorieRepository->findRootCategories(),
@@ -65,10 +79,35 @@ class ProduitType extends AbstractType
                 'required' => false,
                 'currency' => 'MGA',
             ])
-            ->add('stockInitial', NumberType::class)
-            ->add('stockMinimum', NumberType::class)
-            ->add('datePeremption')
-            ->add('fournisseur')
+            ->add('stockInitial', NumberType::class, [
+                'required' => false,
+                'label' => 'Stock initial',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('stockMinimum', NumberType::class, [
+                'required' => false,
+                'label' => 'Stock minimum',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('datePeremption', DateType::class, [
+                'required' => false,
+                'label' => 'Date de péremption',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
+            ->add('fournisseur', EntityType::class, [
+                'class' => Fournisseur::class,
+                'choice_label' => 'nom',
+                'label' => 'Fournisseur',
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ]   )
             ->add('conditionnements', CollectionType::class, [
                 'entry_type' => ConditionnementType::class,
                 'allow_add' => true,
