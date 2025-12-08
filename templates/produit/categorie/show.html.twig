@@ -15,6 +15,14 @@
                 <th>Nom</th>
                 <td>{{ categorie.nom }}</td>
             </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ categorie.createdAt ? categorie.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ categorie.updatedAt ? categorie.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
             {% if categorie.parent %}
                 <tr>
                     <th>Parent</th>

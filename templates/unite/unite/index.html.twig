@@ -14,6 +14,8 @@
                 <th>Id</th>
                 <th>Nom</th>
                 <th>Symbole</th>
+                <th>Créé le</th>
+                <th>Modifié le</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -23,6 +25,8 @@
                 <td>{{ unite.id }}</td>
                 <td>{{ unite.nom }}</td>
                 <td>{{ unite.symbole }}</td>
+                <td>{{ unite.createdAt ? unite.createdAt|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ unite.updatedAt ? unite.updatedAt|date('d/m/Y H:i') : '' }}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ path('app_unite_show', {'id': unite.id}) }}" class="btn btn-sm btn-info">Voir</a>

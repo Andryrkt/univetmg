@@ -27,6 +27,14 @@
                         <th>Facteur</th>
                         <td>{{ conversion_standard.facteur }}</td>
                     </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ conversion_standard.createdAt ? conversion_standard.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ conversion_standard.updatedAt ? conversion_standard.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
                 </tbody>
             </table>
         </div>

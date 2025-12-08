@@ -19,6 +19,14 @@
                 <th>Symbole</th>
                 <td>{{ unite.symbole }}</td>
             </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ unite.createdAt ? unite.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ unite.updatedAt ? unite.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
         </tbody>
     </table>
 

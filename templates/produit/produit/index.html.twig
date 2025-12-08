@@ -15,6 +15,8 @@
                 <th>Code</th>
                 <th>Stock Initial</th>
                 <th>Prix Vente</th>
+                <th>Créé le</th>
+                <th>Modifié le</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -25,6 +27,8 @@
                 <td>{{ produit.code }}</td>
                 <td>{{ produit.stockInitial }}</td>
                 <td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td>
+                <td>{{ produit.createdAt ? produit.createdAt|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ produit.updatedAt ? produit.updatedAt|date('d/m/Y H:i') : '' }}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ path('app_produit_show', {'id': produit.id}) }}" class="btn btn-sm btn-info">Voir</a>

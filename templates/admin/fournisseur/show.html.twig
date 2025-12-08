@@ -27,6 +27,14 @@
                 <th>Email</th>
                 <td>{{ fournisseur.email }}</td>
             </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ fournisseur.createdAt ? fournisseur.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ fournisseur.updatedAt ? fournisseur.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
         </tbody>
     </table>
 

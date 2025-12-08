@@ -12,8 +12,10 @@
         <thead class="table-light">
             <tr>
                 <th>Email</th>
-                <th>Prénom</th>
-                <th>Nom</th>
+                <th>Roles</th>
+                <th>Créé le</th>
+                <th>Modifié le</th>
+                <th>actions</th>
                 <th>Rôles</th>
                 <th>Vérifié</th>
                 <th class="text-end">Actions</th>
@@ -26,6 +28,8 @@
                 <td>{{ user.firstName }}</td>
                 <td>{{ user.lastName }}</td>
                 <td>{{ user.roles|join(', ') }}</td>
+                <td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ user.updatedAt ? user.updatedAt|date('d/m/Y H:i') : '' }}</td>
                 <td>{{ user.isVerified ? 'Oui' : 'Non' }}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">

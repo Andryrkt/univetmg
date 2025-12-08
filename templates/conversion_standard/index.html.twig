@@ -15,6 +15,8 @@
                 <th>Unité d'Origine</th>
                 <th>Unité Cible</th>
                 <th>Facteur</th>
+                <th>Créé le</th>
+                <th>Modifié le</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -25,6 +27,8 @@
                 <td>{{ conversion_standard.uniteOrigine.nom }}</td>
                 <td>{{ conversion_standard.uniteCible.nom }}</td>
                 <td>{{ conversion_standard.facteur }}</td>
+                <td>{{ conversion_standard.createdAt ? conversion_standard.createdAt|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ conversion_standard.updatedAt ? conversion_standard.updatedAt|date('d/m/Y H:i') : '' }}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ path('app_conversion_standard_show', {'id': conversion_standard.id}) }}" class="btn btn-sm btn-info">Voir</a>

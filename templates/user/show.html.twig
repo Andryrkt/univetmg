@@ -12,8 +12,18 @@
             <tr><th>Prénom</th><td>{{ user.firstName }}</td></tr>
             <tr><th>Nom</th><td>{{ user.lastName }}</td></tr>
             <tr><th>Rôles</th><td>{{ user.roles|join(', ') }}</td></tr>
-            <tr><th>Vérifié</th><td>{{ user.isVerified ? 'Oui' : 'Non' }}</td></tr>
-            <tr><th>Créé le</th><td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '' }}</td></tr>
+            <tr>
+                <th>Vérifié</th>
+                <td>{{ user.isVerified ? 'Oui' : 'Non' }}</td>
+            </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ user.updatedAt ? user.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
         </tbody>
     </table>
 

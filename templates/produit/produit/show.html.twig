@@ -15,7 +15,18 @@
             <tr><th>Stock Minimum</th><td>{{ produit.stockMinimum }}</td></tr>
             <tr><th>Prix Achat</th><td>{{ produit.prixAchat|number_format(2, ',', ' ') }} Ar</td></tr>
             <tr><th>Prix Vente</th><td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td></tr>
-            <tr><th>Date Péremption</th><td>{{ produit.datePeremption ? produit.datePeremption|date('d/m/Y') : '' }}</td></tr>
+            <tr>
+                <th>Date Peremption</th>
+                <td>{{ produit.datePeremption ? produit.datePeremption|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Créé le</th>
+                <td>{{ produit.createdAt ? produit.createdAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Modifié le</th>
+                <td>{{ produit.updatedAt ? produit.updatedAt|date('d/m/Y H:i') : '' }}</td>
+            </tr>
             <tr><th>Fournisseur</th><td>{{ produit.fournisseur ? produit.fournisseur.nom : '' }}</td></tr>
             <tr><th>Catégorie</th><td>{{ categoryPath ?? 'N/A' }}</td></tr>
             <tr><th>Unité de base</th><td>{{ produit.uniteDeBase ? produit.uniteDeBase.nom : '' }}</td></tr>

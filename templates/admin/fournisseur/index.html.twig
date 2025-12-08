@@ -14,6 +14,8 @@
                 <th>Nom</th>
                 <th>Téléphone</th>
                 <th>Email</th>
+                <th>Créé le</th>
+                <th>Modifié le</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -23,6 +25,8 @@
                 <td>{{ fournisseur.nom }}</td>
                 <td>{{ fournisseur.telephone }}</td>
                 <td>{{ fournisseur.email }}</td>
+                <td>{{ fournisseur.createdAt ? fournisseur.createdAt|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ fournisseur.updatedAt ? fournisseur.updatedAt|date('d/m/Y H:i') : '' }}</td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ path('app_admin_fournisseur_show', {'id': fournisseur.id}) }}" class="btn btn-sm btn-info">Voir</a>
