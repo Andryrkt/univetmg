@@ -60,7 +60,7 @@
                     <tbody>
                         {% for mouvement in mouvements %}
                             <tr>
-                                <td>{{ mouvement.dateCreation|date('d/m/Y H:i') }}</td>
+                                <td>{{ mouvement.createdAt|date('d/m/Y H:i') }}</td>
                                 <td>
                                     <span class="badge bg-{{ mouvement.type.badgeClass }}">
                                         {{ mouvement.type.label }}

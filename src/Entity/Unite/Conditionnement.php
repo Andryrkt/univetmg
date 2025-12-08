@@ -8,8 +8,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConditionnementRepository::class)]
 #[ORM\Table(name: 'conditionnement')]
+#[ORM\HasLifecycleCallbacks]
 class Conditionnement
 {
+    use \App\Entity\Trait\TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

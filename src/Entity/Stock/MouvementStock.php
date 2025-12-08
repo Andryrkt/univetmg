@@ -9,8 +9,11 @@ use App\Repository\Stock\MouvementStockRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MouvementStockRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class MouvementStock
 {
+    use \App\Entity\Trait\TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,9 +24,6 @@ class MouvementStock
 
     #[ORM\Column]
     private ?float $quantite = null;
-
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $dateCreation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $motif = null;
@@ -47,7 +47,6 @@ class MouvementStock
 
     public function __construct()
     {
-        $this->dateCreation = new \DateTime();
     }
 
     public function getId(): ?int
@@ -75,18 +74,6 @@ class MouvementStock
     public function setQuantite(float $quantite): static
     {
         $this->quantite = $quantite;
-
-        return $this;
-    }
-
-    public function getDateCreation(): ?\DateTimeInterface
-    {
-        return $this->dateCreation;
-    }
-
-    public function setDateCreation(\DateTimeInterface $dateCreation): static
-    {
-        $this->dateCreation = $dateCreation;
 
         return $this;
     }

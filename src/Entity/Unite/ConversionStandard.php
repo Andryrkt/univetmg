@@ -13,8 +13,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: ['uniteOrigine', 'uniteCible'],
     message: 'Cette conversion existe déjà.'
 )]
+#[ORM\HasLifecycleCallbacks]
 class ConversionStandard
 {
+    use \App\Entity\Trait\TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
