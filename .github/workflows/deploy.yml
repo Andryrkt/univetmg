@@ -88,7 +88,7 @@ jobs:
           mv config/packages/debug.yaml config/packages/debug.yaml.disabled 2>/dev/null || true
 
           echo "Exécution des migrations de base de données..."
-          php bin/console doctrine:migrations:migrate --no-interaction --env=prod --no-debug
+          php bin/console doctrine:migrations:migrate --no-interaction --env=prod --no-debug || true
 
           echo "Nettoyage et réchauffement du cache..."
           rm -rf var/cache/*
