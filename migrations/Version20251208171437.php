@@ -20,7 +20,7 @@ final class Version20251208171437 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP SEQUENCE users_id_seq CASCADE');
+        // $this->addSql('DROP SEQUENCE users_id_seq CASCADE');
         $this->addSql('CREATE SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('SELECT setval(\'user_id_seq\', (SELECT MAX(id) FROM users))');
         $this->addSql('DROP INDEX idx_mouvement_stock_date');
