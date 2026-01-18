@@ -2,9 +2,15 @@
   "base": "/build/",
   "entryPoints": {
     "app": {
+      "css": [
+        "/build/assets/app-BtmJYOxZ.css"
+      ],
+      "dynamic": [],
       "js": [
-        "http://[::1]:5173/build/assets/app.js"
-      ]
+        "/build/assets/app-DXLm7suf.js"
+      ],
+      "legacy": false,
+      "preload": []
     }
   },
   "legacy": false,
@@ -15,5 +21,5 @@
     2,
     2
   ],
-  "viteServer": "http://[::1]:5173"
+  "viteServer": null
 }
