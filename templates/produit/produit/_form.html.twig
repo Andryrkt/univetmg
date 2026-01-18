@@ -25,8 +25,28 @@
 </div>
 
 <h3 class="mt-4">Conditionnements</h3>
-<div id="conditionnements" class="list-group" data-prototype="{{ form_widget(form.conditionnements.vars.prototype)|e('html_attr') }}" data-widget-tags="{{ '<div class="list-group-item"></div>'|e('html_attr') }}" data-widget-counter="{{ form.conditionnements|length }}">
-    {% for conditionnementForm in form.conditionnements %}
+
+{% set prototype_html %}
+    {% set prototype_form = form.conditionnements.vars.prototype %}
+    <div class='list-group-item'>
+        {{ form_errors(prototype_form) }}
+        <div class='row'>
+            <div class='col'>{{ form_row(prototype_form.unite) }}</div>
+            <div class='col'>{{ form_row(prototype_form.quantite) }}</div>
+            <div class='col-auto d-flex align-items-end'>
+                <button type='button' class='btn btn-danger remove-collection-widget'>Supprimer</button>
+            </div>
+        </div>
+    </div>
+{% endset %}
+
+<div id="conditionnements" 
+     class="list-group" 
+     data-prototype="{{ prototype_html|e('html_attr') }}"
+     data-widget-tags="{{ '<div class="list-group-item"></div>'|e('html_attr') }}"
+     data-widget-counter="{{ form['conditionnements']|length }}">
+    
+    {% for conditionnementForm in form['conditionnements'] %}
         <div class="list-group-item">
             {{ form_errors(conditionnementForm) }}
             <div class="row">

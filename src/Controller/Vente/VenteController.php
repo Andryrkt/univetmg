@@ -210,10 +210,19 @@ class VenteController extends AbstractController
     {
         $filename = sprintf('ticket_%s.pdf', $vente->getNumeroFacture());
         
+        // Custom options for receipt: 80mm width. 80mm is approx 226.77pt.
+        // We provide a custom paper size array [x_min, y_min, width, height].
+        // Height can be large, dompdf will adjust to content.
+        $pdfOptions = [
+            'paper_size' => [0, 0, 226.77, 841.89],
+            'paper_orientation' => 'portrait'
+        ];
+
         return $pdfGenerator->generatePdfResponse(
             'vente/receipt_pdf.html.twig',
             ['vente' => $vente],
-            $filename
+            $filename,
+            $pdfOptions
         );
     }
 }

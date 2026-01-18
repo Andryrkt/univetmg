@@ -1,41 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.add-collection-widget').forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            const list = document.querySelector(e.currentTarget.dataset.listSelector);
-            const counter = list.dataset.widgetCounter || list.children.length;
-            const newWidget = list.dataset.prototype.replace(/__name__/g, counter);
-            
-            const newDiv = document.createElement('div');
-            newDiv.innerHTML = newWidget;
+    const addButtons = document.querySelectorAll('.add-collection-widget');
 
-            const item = document.createElement('div');
-            item.classList.add('list-group-item');
-            
-            const newWidgetContent = newWidget.replace(/<label class="required">/g, '<label>');
-            item.innerHTML = newWidgetContent;
-
-            const removeButton = document.createElement('button');
-            removeButton.type = 'button';
-            removeButton.className = 'btn btn-danger remove-collection-widget';
-            removeButton.innerText = 'Supprimer';
-            
-            const row = item.querySelector('.row');
-            if (row) {
-                const col = document.createElement('div');
-                col.className = 'col-auto d-flex align-items-end';
-                col.appendChild(removeButton);
-                row.appendChild(col);
-            } else {
-                 item.appendChild(removeButton);
+    addButtons.forEach(btn => {
+        btn.addEventListener("click", function() {
+            const list = document.querySelector(this.dataset.listSelector);
+            if (!list) {
+                console.error(`Element not found: ${this.dataset.listSelector}`);
+                return;
             }
 
-            list.appendChild(item);
-            list.dataset.widgetCounter = parseInt(counter) + 1;
+            // Récupérer le prototype et le compteur
+            const prototype = list.dataset.prototype;
+            let counter = parseInt(list.dataset.widgetCounter) || list.children.length;
+
+            // Créer le nouvel élément à partir du prototype
+            // Remplacer l'identifiant de substitution par le compteur actuel
+            const newWidget = prototype.replace(/__name__/g, counter);
+
+            // Incrémenter le compteur pour le prochain ajout
+            list.dataset.widgetCounter = counter + 1;
+
+            // Créer un nouvel élément de liste pour y insérer le widget
+            list.insertAdjacentHTML('beforeend', newWidget);
         });
     });
 
+    // Gérer la suppression d'un élément de la collection
     document.addEventListener('click', function (e) {
-        if (e.target && e.target.classList.contains('remove-collection-widget')) {
+        // Vérifier si le bouton de suppression a été cliqué
+        if (e.target && e.target.matches('.remove-collection-widget')) {
             e.preventDefault();
             const item = e.target.closest('.list-group-item');
             if (item) {

@@ -18,7 +18,7 @@ final class FournisseurController extends AbstractController
     public function index(FournisseurRepository $fournisseurRepository): Response
     {
         return $this->render('admin/fournisseur/index.html.twig', [
-            'fournisseurs' => $fournisseurRepository->findAll(),
+            'fournisseurs' => $fournisseurRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 
