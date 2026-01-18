@@ -28,7 +28,7 @@ class MouvementStockRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('m')
             ->andWhere('m.produit = :produit')
             ->setParameter('produit', $produit)
-            ->orderBy('m.dateCreation', 'DESC');
+            ->orderBy('m.createdAt', 'DESC');
 
         if ($limit) {
             $qb->setMaxResults($limit);
@@ -45,10 +45,10 @@ class MouvementStockRepository extends ServiceEntityRepository
     public function findByPeriode(\DateTimeInterface $debut, \DateTimeInterface $fin): array
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.dateCreation BETWEEN :debut AND :fin')
+            ->andWhere('m.createdAt BETWEEN :debut AND :fin')
             ->setParameter('debut', $debut)
             ->setParameter('fin', $fin)
-            ->orderBy('m.dateCreation', 'DESC')
+            ->orderBy('m.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -63,7 +63,7 @@ class MouvementStockRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('m')
             ->andWhere('m.type = :type')
             ->setParameter('type', $type)
-            ->orderBy('m.dateCreation', 'DESC');
+            ->orderBy('m.createdAt', 'DESC');
 
         if ($limit) {
             $qb->setMaxResults($limit);
@@ -80,7 +80,7 @@ class MouvementStockRepository extends ServiceEntityRepository
         $dernierMouvement = $this->createQueryBuilder('m')
             ->andWhere('m.produit = :produit')
             ->setParameter('produit', $produit)
-            ->orderBy('m.dateCreation', 'DESC')
+            ->orderBy('m.createdAt', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

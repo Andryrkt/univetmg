@@ -116,7 +116,7 @@ class StockController extends AbstractController
     {
         $mouvements = $this->mouvementStockRepository->findBy(
             [],
-            ['dateCreation' => 'DESC'],
+            ['createdAt' => 'DESC'],
             50
         );
 
