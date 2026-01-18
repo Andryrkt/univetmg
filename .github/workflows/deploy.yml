@@ -68,6 +68,9 @@ jobs:
           rm -rf vendor
           composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
+          echo "Installation des assets..."
+          php bin/console assets:install public --env=prod
+
           echo "Configuration production..."
           # Création de .env.local avec APP_SECRET si inexistant
           if [ ! -f .env.local ]; then
@@ -91,7 +94,12 @@ jobs:
           php bin/console doctrine:migrations:migrate --no-interaction --env=prod --no-debug || true
 
           echo "Nettoyage et réchauffement du cache..."
-          rm -rf var/cache/*
+          # Tentative de correction des permissions avant suppression
+          chmod -R 777 var/cache > /dev/null 2>&1 || true
+          rm -rf var/cache/* > /dev/null 2>&1 || true
+          
+          # Utilisation de cache:clear qui est plus robuste
+          php bin/console cache:clear --env=prod --no-debug
           php bin/console cache:warmup --env=prod --no-debug
 
           echo "Permissions sécurisées..."
