@@ -16,5 +16,4 @@
 
 ###> pentatrion/vite-bundle ###
 /node_modules/
-/assets/
 ###< pentatrion/vite-bundle ###
