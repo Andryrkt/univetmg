@@ -62,9 +62,12 @@ jobs:
           echo "Commit déployé :"
           git rev-parse HEAD
 
+          echo "Téléchargement de composer..."
+          curl -sS https://getcomposer.org/installer | php
+          
           echo "Diagnostics Serveur:"
           php -v
-          composer --version
+          php composer.phar --version
           pwd
           ls -la
           
@@ -76,7 +79,7 @@ jobs:
           echo "Installation des dépendances (sans dev)..."
           export COMPOSER_HOME="$HOME/.composer"
           rm -rf vendor
-          composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
+          php composer.phar install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
           echo "Installation des assets..."
           php bin/console assets:install public --env=prod
@@ -89,7 +92,7 @@ jobs:
           
           # Compilation des variables d'environnement pour la prod
           # Cela génère .env.local.php et force APP_ENV=prod
-          composer dump-env prod
+          php composer.phar dump-env prod
           
           chmod 600 .env.local .env.local.php
 
