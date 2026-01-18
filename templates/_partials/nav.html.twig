@@ -87,6 +87,33 @@
 						</ul>
 					</li>
 				{% endif %}
+
+				{# Menu Gestion Vente #}
+				{% if app.user %}
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownVente" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="fas fa-cash-register"></i> Ventes
+						</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdownVente">
+							<li>
+								<a class="dropdown-item" href="{{ path('app_vente_index') }}">
+									<i class="fas fa-list"></i> Liste des ventes
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item text-primary" href="{{ path('app_vente_new') }}">
+									<i class="fas fa-plus-circle"></i> Nouvelle vente
+								</a>
+							</li>
+							<li><hr class="dropdown-divider"></li>
+							<li>
+								<a class="dropdown-item" href="{{ path('app_client_index') }}">
+									<i class="fas fa-users"></i> Clients
+								</a>
+							</li>
+						</ul>
+					</li>
+				{% endif %}
 			</ul>
 
 			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">

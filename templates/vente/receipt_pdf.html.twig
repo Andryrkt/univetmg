@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket {{ vente.numeroFacture }}</title>
+    <style>
+        @page {
+            margin: 0.5cm;
+            size: 80mm auto; /* Thermal printer width */
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            color: #000;
+            width: 72mm;
+            margin: 0 auto;
+        }
+        .center {
+            text-align: center;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 5px;
+        }
+        .header h1 {
+            margin: 5px 0;
+            font-size: 14pt;
+        }
+        .info-line {
+            margin: 3px 0;
+            font-size: 8pt;
+        }
+        .separator {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+        .products-table {
+            width: 100%;
+            margin: 5px 0;
+        }
+        .product-line {
+            margin: 5px 0;
+        }
+        .product-name {
+            font-weight: bold;
+        }
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+        }
+        .total-section {
+            margin-top: 10px;
+            border-top: 2px solid #000;
+            padding-top: 5px;
+        }
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 11pt;
+            margin: 5px 0;
+        }
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 8pt;
+            border-top: 1px dashed #000;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>TICKET DE CAISSE</h1>
+        <div class="info-line">N° {{ vente.numeroFacture }}</div>
+        <div class="info-line">{{ vente.dateVente|date('d/m/Y H:i') }}</div>
+    </div>
+
+    <div class="info-line">
+        <strong>Client:</strong> {{ vente.client ? vente.client.nom : 'Client de passage' }}
+    </div>
+    {% if vente.client and vente.client.telephone %}
+        <div class="info-line">Tél: {{ vente.client.telephone }}</div>
+    {% endif %}
+    <div class="info-line">
+        <strong>Vendeur:</strong> {{ vente.user ? vente.user.email : 'N/A' }}
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="products-table">
+        {% for ligne in vente.ligneVentes %}
+            <div class="product-line">
+                <div class="product-name">{{ ligne.produit.nom }}</div>
+                <div class="product-details">
+                    <span>{{ ligne.quantite }} {{ ligne.unite ? ligne.unite.nom : ligne.produit.uniteDeBase.nom }} x {{ ligne.prixUnitaire|number_format(0, ',', ' ') }} Ar</span>
+                    <span>{{ ligne.sousTotal|number_format(0, ',', ' ') }} Ar</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="total-section">
+        <div class="total-line">
+            <span>TOTAL</span>
+            <span>{{ vente.total|number_format(0, ',', ' ') }} Ar</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>Merci de votre visite</div>
+        <div>{{ "now"|date('d/m/Y H:i') }}</div>
+        {% if vente.statut.value == 'validee' %}
+            <div style="margin-top: 5px;">✓ PAYÉ</div>
+        {% elseif vente.statut.value == 'annulee' %}
+            <div style="margin-top: 5px;">✗ ANNULÉ</div>
+        {% endif %}
+    </div>
+</body>
+</html>

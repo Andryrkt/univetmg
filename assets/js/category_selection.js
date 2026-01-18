@@ -6,11 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainCategorySelect = document.getElementById('produit_categorieParent');
 
     if (!mainCategorySelect || !categoryContainer || !finalCategoryInput) {
-        console.error('One or more required elements are missing:', {
-            mainCategorySelect,
-            categoryContainer,
-            finalCategoryInput
-        });
+        // This script is likely running on a page without the category selection form (e.g. Sales page).
+        // We just return silently to avoid errors.
         return;
     }
 
@@ -61,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (currentWrapper && currentWrapper.previousElementSibling) {
                 previousSelect = currentWrapper.previousElementSibling.querySelector('select');
             }
-            
-            if(!previousSelect) { // Fallback to main select
+
+            if (!previousSelect) { // Fallback to main select
                 previousSelect = mainCategorySelect;
             }
 
@@ -123,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = category.nom;
             newSelect.appendChild(option);
         });
-        
+
         selectWrapper.appendChild(newSelect);
         categoryContainer.appendChild(selectWrapper);
     }

@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vente - {{ vente.numeroFacture }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="mb-3">
+            <a href="{{ path('app_vente_index') }}" class="btn btn-secondary">&larr; Retour à la liste</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Facture {{ vente.numeroFacture }}</h3>
+                <div>
+                     {% if vente.statut.value == 'brouillon' %}
+                        <a href="{{ path('app_vente_edit', {'id': vente.id}) }}" class="btn btn-warning btn-sm me-2">Modifier</a>
+                        <form method="post" action="{{ path('app_vente_cancel', {'id': vente.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ vente.id) }}">
+                             <button class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    {% elseif vente.statut.value == 'validee' %}
+                        <a href="{{ path('app_vente_pdf', {'id': vente.id}) }}" class="btn btn-primary btn-sm me-2" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Facture PDF
+                        </a>
+                        <a href="{{ path('app_vente_receipt', {'id': vente.id}) }}" class="btn btn-info btn-sm me-2" target="_blank">
+                            <i class="fas fa-receipt"></i> Ticket
+                        </a>
+                        <form method="post" action="{{ path('app_vente_cancel', {'id': vente.id}) }}" class="d-inline" onsubmit="return confirm('Attention : Annuler cette vente va remettre les produits en stock. Continuer ?');">
+                             <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ vente.id) }}">
+                             <button class="btn btn-outline-danger btn-sm">Annuler la vente</button>
+                        </form>
+                    {% elseif vente.statut.value == 'annulee' %}
+                        <a href="{{ path('app_vente_pdf', {'id': vente.id}) }}" class="btn btn-secondary btn-sm me-2" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Facture PDF
+                        </a>
+                        <a href="{{ path('app_vente_receipt', {'id': vente.id}) }}" class="btn btn-secondary btn-sm" target="_blank">
+                            <i class="fas fa-receipt"></i> Ticket
+                        </a>
+                    {% endif %}
+                </div>
+                <!-- Badge moved out of header/div to side or kept? Original had badge in header. Let's keep it but adjust layout -->
+            </div>
+            <div class="card-body">
+                <div class="mb-3 text-end">
+                    <span class="badge {{ vente.statut.value == 'validee' ? 'bg-success' : (vente.statut.value == 'annulee' ? 'bg-danger' : 'bg-secondary') }} fs-6">
+                        {{ vente.statut.label }}
+                    </span>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Informations Vente</h5>
+                        <p>
+                            <strong>Date:</strong> {{ vente.dateVente|date('d/m/Y H:i') }}<br>
+                            <strong>Vendeur:</strong> {{ vente.user ? vente.user.email : 'N/A' }}
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <h5>Client</h5>
+                        <p>
+                            <strong>Nom:</strong> {{ vente.client ? vente.client.nom : 'Client de passage' }}<br>
+                            {% if vente.client %}
+                                <strong>Tél:</strong> {{ vente.client.telephone }}<br>
+                                <strong>Adresse:</strong> {{ vente.client.adresse }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <h5>Détails Produits</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-center">Unité</th>
+                            <th class="text-end">Prix Unitaire</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-end">Sous-Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ligne in vente.ligneVentes %}
+                            <tr>
+                                <td>{{ ligne.produit.nom }}</td>
+                                <td class="text-center">{{ ligne.unite ? ligne.unite.nom : ligne.produit.uniteDeBase.nom }}</td>
+                                <td class="text-end">{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} Ar</td>
+                                <td class="text-center">{{ ligne.quantite }}</td>
+                                <td class="text-end">{{ ligne.sousTotal|number_format(2, ',', ' ') }} Ar</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-end">Total</th>
+                            <th class="text-end fw-bold">{{ vente.total|number_format(2, ',', ' ') }} Ar</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

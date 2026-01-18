@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Client{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Modifier Client</h1>
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="mt-3">
+                <button class="btn btn-success">Mettre à jour</button>
+                <a href="{{ path('app_client_index') }}" class="btn btn-secondary">Retour</a>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="mt-4">
+             {{ include('client/_delete_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

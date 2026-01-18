@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Ventes{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Liste des Ventes</h1>
+            <a href="{{ path('app_vente_new') }}" class="btn btn-primary">Nouvelle Vente</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>N° Facture</th>
+                        <th>Client</th>
+                        <th>Vendeur</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for vente in ventes %}
+                    <tr>
+                        <td>{{ vente.dateVente ? vente.dateVente|date('d/m/Y H:i') : '' }}</td>
+                        <td>{{ vente.numeroFacture }}</td>
+                        <td>{{ vente.client ? vente.client.nom : 'Anonyme' }}</td>
+                        <td>{{ vente.user ? vente.user.email : '' }}</td>
+                        <td>{{ vente.total|number_format(2, ',', ' ') }} Ar</td>
+                        <td>
+                            <span class="badge {{ vente.statut.value == 'validee' ? 'bg-success' : (vente.statut.value == 'annulee' ? 'bg-danger' : 'bg-secondary') }}">
+                                {{ vente.statut.label }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ path('app_vente_show', {'id': vente.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucune vente enregistrée</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

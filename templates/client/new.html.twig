@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Client{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Nouveau Client</h1>
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn btn-primary mt-3">{{ button_label|default('Enregistrer') }}</button>
+            <a href="{{ path('app_client_index') }}" class="btn btn-secondary mt-3">Retour</a>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

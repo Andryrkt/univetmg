@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Produit\Produit;
 use App\Entity\Stock\MouvementStock;
 use App\Entity\User;
+use App\Entity\Vente\Vente;
 use App\Enum\TypeMouvement;
 use App\Repository\Produit\ProduitRepository;
 use App\Repository\Stock\MouvementStockRepository;
@@ -263,6 +264,47 @@ class StockManager
         }
 
         return $produitsProches;
+    }
+
+    /**
+     * Traite les mouvements de stock pour une vente validée
+     */
+    /**
+     * Traite les mouvements de stock pour une vente validée
+     */
+    public function processVente(Vente $vente): void
+    {
+        foreach ($vente->getLigneVentes() as $ligne) {
+            // Calculate real quantity to deduct based on conversion factor
+            $quantiteReelle = $ligne->getQuantite() * ($ligne->getFacteurConversion() ?? 1.0);
+            
+            $this->ajouterSortie(
+                $ligne->getProduit(),
+                $quantiteReelle,
+                $vente->getUser(),
+                sprintf('Vente - Facture N°%s (Qté: %s %s)', $vente->getNumeroFacture(), $ligne->getQuantite(), $ligne->getUnite() ? $ligne->getUnite()->getNom() : ''),
+                $vente->getNumeroFacture()
+            );
+        }
+    }
+
+    /**
+     * Annule une vente validée (remet le stock)
+     */
+    public function revertVente(Vente $vente): void
+    {
+        foreach ($vente->getLigneVentes() as $ligne) {
+             // Calculate real quantity to return based on conversion factor
+            $quantiteReelle = $ligne->getQuantite() * ($ligne->getFacteurConversion() ?? 1.0);
+
+            $this->ajouterRetour(
+                $ligne->getProduit(),
+                $quantiteReelle,
+                $vente->getUser(), // Ou l'utilisateur courant si passé en paramètre, mais ici on utilise le vendeur original ou on devrait passer l'user qui annule.
+                sprintf('Annulation Vente - Facture N°%s', $vente->getNumeroFacture()),
+                $vente->getNumeroFacture()
+            );
+        }
     }
 
     /**

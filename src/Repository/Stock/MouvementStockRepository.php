@@ -101,7 +101,7 @@ class MouvementStockRepository extends ServiceEntityRepository
     public function findRecent(int $limit = 10): array
     {
         return $this->createQueryBuilder('m')
-            ->orderBy('m.dateCreation', 'DESC')
+            ->orderBy('m.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
