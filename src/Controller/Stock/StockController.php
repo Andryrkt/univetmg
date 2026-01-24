@@ -106,12 +106,12 @@ class StockController extends AbstractController
     {
         // This method will likely need refactoring as well since StockManager is probably outdated
         // For now, we leave it as is to avoid breaking too much at once.
-        $produitsEnRupture = []; // $this->stockManager->getProduitsEnRupture();
-        $produitsACommander = []; // $this->stockManager->getProduitsACommander();
-        $valeurStock = 0; // $this->stockManager->calculerValeurStock();
+        $produitsEnRupture = $this->stockManager->getProduitsEnRupture();
+        $produitsACommander = $this->stockManager->getProduitsACommander();
+        $valeurStock = $this->stockManager->calculerValeurStock();
         $mouvementsRecents = $this->mouvementStockRepository->findRecent(10);
-        $produitsPerimes = []; // $this->stockManager->getProduitsPerimes();
-        $produitsProchesPeremption = []; // $this->stockManager->getProduitsProchesPeremption();
+        $produitsPerimes = $this->stockManager->getProduitsPerimes();
+        $produitsProchesPeremption = $this->stockManager->getProduitsProchesPeremption();
 
         return $this->render('stock/dashboard.html.twig', [
             'produitsEnRupture' => $produitsEnRupture,

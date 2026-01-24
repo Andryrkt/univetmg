@@ -39,7 +39,7 @@ class LotType extends AbstractType
                 ],
             ])
             ->add('prixAchat', MoneyType::class, [
-                'required' => false,
+                'required' => true,
                 'currency' => 'MGA',
                 'grouping' => true,
                 'label' => 'Prix d\'achat *',

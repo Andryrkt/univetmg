@@ -139,14 +139,18 @@ class StockManager
      *
      * @return array<Produit>
      */
+    /**
+     * Récupère les produits en rupture de stock (total stock des lots <= 0)
+     *
+     * @return array<Produit>
+     */
     public function getProduitsEnRupture(): array
     {
         $produits = $this->produitRepository->findAll();
         $produitsEnRupture = [];
 
         foreach ($produits as $produit) {
-            $stockActuel = $this->getStockActuel($produit);
-            if ($stockActuel <= 0) {
+            if ($produit->getQuantiteEnStock() <= 0) {
                 $produitsEnRupture[] = $produit;
             }
         }
@@ -157,7 +161,7 @@ class StockManager
     /**
      * Récupère les produits à commander (stock < stock minimum)
      *
-     * @return array<array{produit: Produit, stockActuel: float, stockMinimum: float}>
+     * @return array<array{produit: Produit, stockActuel: float, stockMinimum: float, manquant: float}>
      */
     public function getProduitsACommander(): array
     {
@@ -165,7 +169,7 @@ class StockManager
         $produitsACommander = [];
 
         foreach ($produits as $produit) {
-            $stockActuel = $this->getStockActuel($produit);
+            $stockActuel = $produit->getQuantiteEnStock();
             if ($stockActuel < $produit->getStockMinimum()) {
                 $produitsACommander[] = [
                     'produit' => $produit,
@@ -180,7 +184,7 @@ class StockManager
     }
 
     /**
-     * Calcule la valeur totale du stock
+     * Calcule la valeur totale du stock basée sur le prix d'achat des lots
      */
     public function calculerValeurStock(): array
     {
@@ -189,17 +193,16 @@ class StockManager
         $details = [];
 
         foreach ($produits as $produit) {
-            $stockActuel = $this->getStockActuel($produit);
-            $prixAchat = $produit->getPrixAchat() ?? 0;
-            $valeurProduit = $stockActuel * $prixAchat;
+            $valeurProduit = 0;
+            foreach ($produit->getLots() as $lot) {
+                $valeurProduit += $lot->getQuantite() * ($lot->getPrixAchat() ?? 0);
+            }
             
             $valeurTotale += $valeurProduit;
             
-            if ($stockActuel > 0) {
+            if ($valeurProduit > 0) {
                 $details[] = [
                     'produit' => $produit,
-                    'quantite' => $stockActuel,
-                    'prixUnitaire' => $prixAchat,
                     'valeurTotale' => $valeurProduit
                 ];
             }
@@ -212,58 +215,60 @@ class StockManager
     }
 
     /**
-     * Récupère les produits périmés
+     * Récupère les lots périmés
      *
      * @return array<array{produit: Produit, datePeremption: \DateTime, joursDepuisPeremption: int}>
      */
     public function getProduitsPerimes(): array
     {
         $produits = $this->produitRepository->findAll();
-        $produitsPerimes = [];
+        $perimes = [];
         $aujourdhui = new \DateTime();
 
         foreach ($produits as $produit) {
-            $datePeremption = $produit->getDatePeremption();
-            if ($datePeremption && $datePeremption < $aujourdhui) {
-                $interval = $aujourdhui->diff($datePeremption);
-                $produitsPerimes[] = [
-                    'produit' => $produit,
-                    'datePeremption' => $datePeremption,
-                    'joursDepuisPeremption' => $interval->days
-                ];
+            foreach ($produit->getLots() as $lot) {
+                $datePeremption = $lot->getDatePeremption();
+                if ($datePeremption && $datePeremption < $aujourdhui && $lot->getQuantite() > 0) {
+                    $interval = $aujourdhui->diff($datePeremption);
+                    $perimes[] = [
+                        'produit' => $produit,
+                        'lot' => $lot,
+                        'datePeremption' => $datePeremption,
+                        'joursDepuisPeremption' => $interval->days
+                    ];
+                }
             }
         }
 
-        return $produitsPerimes;
+        return $perimes;
     }
 
     /**
-     * Récupère les produits proches de la péremption
-     *
-     * @param int $joursAvant Nombre de jours avant la péremption pour déclencher l'alerte (défaut: 30)
-     * @return array<array{produit: Produit, datePeremption: \DateTime, joursRestants: int}>
+     * Récupère les lots proches de la péremption
      */
     public function getProduitsProchesPeremption(int $joursAvant = 30): array
     {
         $produits = $this->produitRepository->findAll();
-        $produitsProches = [];
+        $proches = [];
         $aujourdhui = new \DateTime();
         $dateLimit = (clone $aujourdhui)->modify("+{$joursAvant} days");
 
         foreach ($produits as $produit) {
-            $datePeremption = $produit->getDatePeremption();
-            // Produit proche de la péremption : date entre aujourd'hui et la date limite
-            if ($datePeremption && $datePeremption > $aujourdhui && $datePeremption <= $dateLimit) {
-                $interval = $aujourdhui->diff($datePeremption);
-                $produitsProches[] = [
-                    'produit' => $produit,
-                    'datePeremption' => $datePeremption,
-                    'joursRestants' => $interval->days
-                ];
+            foreach ($produit->getLots() as $lot) {
+                $datePeremption = $lot->getDatePeremption();
+                if ($datePeremption && $datePeremption > $aujourdhui && $datePeremption <= $dateLimit && $lot->getQuantite() > 0) {
+                    $interval = $aujourdhui->diff($datePeremption);
+                    $proches[] = [
+                        'produit' => $produit,
+                        'lot' => $lot,
+                        'datePeremption' => $datePeremption,
+                        'joursRestants' => $interval->days
+                    ];
+                }
             }
         }
 
-        return $produitsProches;
+        return $proches;
     }
 
     /**
