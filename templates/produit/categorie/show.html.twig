@@ -39,6 +39,10 @@
                 <td>{{ categorie.nom }}</td>
             </tr>
             <tr>
+                <th>Abréviation</th>
+                <td>{{ categorie.abbreviation }}</td>
+            </tr>
+            <tr>
                 <th>Créé le</th>
                 <td>{{ categorie.createdAt ? categorie.createdAt|date('d/m/Y H:i') : '' }}</td>
             </tr>

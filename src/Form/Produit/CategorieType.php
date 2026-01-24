@@ -21,6 +21,13 @@ class CategorieType extends AbstractType
                     'class' => 'form-control',
                 ],
             ])
+            ->add('abbreviation', TextType::class, [
+                'label' => 'Abréviation',
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
             ->add('parent', EntityType::class, [
                 'class' => Categorie::class,
                 'choice_label' => 'nom',

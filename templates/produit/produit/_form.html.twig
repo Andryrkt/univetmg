@@ -1,7 +1,7 @@
 {{ form_start(form) }}
 <div class="row">
-    <div class="col-md-6">{{ form_row(form.nom) }}</div>
-    <div class="col-md-6">{{ form_row(form.code) }}</div>
+    <div class="col-md-8">{{ form_row(form.nom) }}</div>
+    <div class="col-md-4">{{ form_row(form.fournisseur) }}</div>
 </div>
 <div class="row">
     <div class="col-md-6">
@@ -12,17 +12,51 @@
     <div class="col-md-6">{{ form_row(form.uniteDeBase) }}</div>
 </div>
 <div class="row">
-    <div class="col-md-6">{{ form_row(form.prixAchat) }}</div>
     <div class="col-md-6">{{ form_row(form.prixVente) }}</div>
-</div>
-<div class="row">
-    <div class="col-md-6">{{ form_row(form.stockInitial) }}</div>
     <div class="col-md-6">{{ form_row(form.stockMinimum) }}</div>
 </div>
-<div class="row">
-    <div class="col-md-6">{{ form_row(form.datePeremption) }}</div>
-    <div class="col-md-6">{{ form_row(form.fournisseur) }}</div>
+
+<h3 class="mt-4">Lots du produit</h3> {# Added #}
+
+{% set prototype_lot_html %}
+    {% set prototype_lot_form = form.lots.vars.prototype %}
+    <div class='list-group-item'>
+        {{ form_errors(prototype_lot_form) }}
+        <div class='row'>
+            <div class='col'>{{ form_row(prototype_lot_form.numeroLot) }}</div>
+            <div class='col'>{{ form_row(prototype_lot_form.quantite) }}</div>
+            <div class='col'>{{ form_row(prototype_lot_form.datePeremption) }}</div>
+            <div class='col'>{{ form_row(prototype_lot_form.prixAchat) }}</div>
+            <div class='col-auto d-flex align-items-end'>
+                <button type='button' class='btn btn-danger remove-collection-widget'>Supprimer</button>
+            </div>
+        </div>
+    </div>
+{% endset %}
+
+<div id="lots"
+     class="list-group"
+     data-prototype="{{ prototype_lot_html|e('html_attr') }}"
+     data-widget-tags="{{ '<div class="list-group-item"></div>'|e('html_attr') }}"
+     data-widget-counter="{{ form['lots']|length }}">
+
+    {% for lotForm in form['lots'] %}
+        <div class="list-group-item">
+            {{ form_errors(lotForm) }}
+            <div class="row">
+                <div class="col">{{ form_row(lotForm.numeroLot) }}</div>
+                <div class="col">{{ form_row(lotForm.quantite) }}</div>
+                <div class="col">{{ form_row(lotForm.datePeremption) }}</div>
+                <div class="col">{{ form_row(lotForm.prixAchat) }}</div>
+                <div class="col-auto d-flex align-items-end'>
+                    <button type="button" class="btn btn-danger remove-collection-widget">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 </div>
+
+<button type="button" class="btn btn-secondary add-collection-widget mt-2" data-list-selector="#lots">Ajouter un lot</button>
 
 <h3 class="mt-4">Conditionnements</h3>
 

@@ -2,13 +2,10 @@
 
 namespace App\Form\Produit;
 
-
-
-namespace App\Form\Produit;
-
 use App\Entity\Produit\Categorie;
 use App\Entity\Unite\Unite;
 use App\Entity\Produit\Produit;
+use App\Form\Stock\LotType; // Added
 use App\Form\Unite\ConditionnementType;
 use App\Repository\Produit\CategorieRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -19,7 +16,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use App\Entity\Admin\Fournisseur;
 
 class ProduitType extends AbstractType
@@ -37,14 +33,6 @@ class ProduitType extends AbstractType
             ->add('nom', TextType::class, [
                 'required' => true,
                 'label' => 'Nom *',
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
-            ->add('code', TextType::class, [
-                'required' => false,
-                'label' => 'Code',
-                'disabled' => true,
                 'attr' => [
                     'class' => 'form-control',
                 ],
@@ -72,14 +60,7 @@ class ProduitType extends AbstractType
                 'choice_label' => 'nom',
                 'label' => 'Unité de base',
             ])
-            ->add('prixAchat', MoneyType::class, [
-                'required' => false,
-                'currency' => 'MGA', // ou EUR selon ton cas
-                'grouping' => true,
-                'attr' => [
-                    'class' => 'form-control js-format-thousands',
-                ]
-            ])
+            // Removed prixAchat field
             ->add('prixVente', MoneyType::class, [
                 'required' => false,
                 'currency' => 'MGA',
@@ -88,13 +69,7 @@ class ProduitType extends AbstractType
                     'class' => 'form-control js-format-thousands',
                 ]
             ])
-            ->add('stockInitial', NumberType::class, [
-                'required' => false,
-                'label' => 'Stock initial',
-                'attr' => [
-                    'class' => 'form-control js-numeric-input',
-                ],
-            ])
+            // Removed stockInitial field
             ->add('stockMinimum', NumberType::class, [
                 'required' => false,
                 'label' => 'Stock minimum',
@@ -102,13 +77,7 @@ class ProduitType extends AbstractType
                     'class' => 'form-control js-numeric-input',
                 ],
             ])
-            ->add('datePeremption', DateType::class, [
-                'required' => false,
-                'label' => 'Date de péremption',
-                'attr' => [
-                    'class' => 'form-control',
-                ],
-            ])
+            // Removed datePeremption field
             ->add('fournisseur', EntityType::class, [
                 'class' => Fournisseur::class,
                 'choice_label' => 'nom',
@@ -123,6 +92,14 @@ class ProduitType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => 'Conditionnements (ex: boîte, carton)',
+            ])
+            ->add('lots', CollectionType::class, [ // Added
+                'entry_type' => LotType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => 'Lots du produit',
+                'entry_options' => ['label' => false],
             ]);
     }
 

@@ -3,56 +3,60 @@
 {% block title %}Sortie de Stock{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0">
-                        <i class="fas fa-minus-circle"></i> Sortie de Stock
-                    </h4>
+    <div class="container mt-4">
+        <h1>Enregistrer une Sortie de Stock</h1>
+        <hr>
+
+        {{ form_start(form, {'attr': {'id': 'sortie-form'}}) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.produit) }}
                 </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_label(form.produit) }}
-                            {{ form_widget(form.produit) }}
-                            {{ form_errors(form.produit) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.quantite) }}
-                            {{ form_widget(form.quantite) }}
-                            {{ form_errors(form.quantite) }}
-                            <small class="form-text text-muted">
-                                Quantité à retirer du stock
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.reference) }}
-                            {{ form_widget(form.reference) }}
-                            {{ form_errors(form.reference) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_label(form.motif) }}
-                            {{ form_widget(form.motif) }}
-                            {{ form_errors(form.motif) }}
-                        </div>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Retour
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-save"></i> Enregistrer la sortie
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
+                <div class="col-md-6">
+                    {{ form_row(form.lot) }}
                 </div>
             </div>
-        </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    {{ form_row(form.quantite) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.motif) }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Valider la sortie</button>
+                <a href="{{ path('app_stock_index') }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        {{ form_end(form) }}
     </div>
-</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const produitSelect = document.querySelector('.js-produit-select');
+            const form = document.getElementById('sortie-form');
+
+            produitSelect.addEventListener('change', function() {
+                const data = new FormData(form);
+                const url = window.location.href;
+
+                fetch(url, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newLotSelect = doc.querySelector('.js-lot-select');
+                    const currentLotSelect = document.querySelector('.js-lot-select');
+                    
+                    if (newLotSelect && currentLotSelect) {
+                        currentLotSelect.innerHTML = newLotSelect.innerHTML;
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

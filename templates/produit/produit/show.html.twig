@@ -11,14 +11,9 @@
             <tr><th>Nom</th><td>{{ produit.nom }}</td></tr>
             <tr><th>Description</th><td>{{ produit.description }}</td></tr>
             <tr><th>Code</th><td>{{ produit.code }}</td></tr>
-            <tr><th>Stock Initial</th><td>{{ produit.stockInitial }}</td></tr>
+            <tr><th>Stock Actuel</th><td>{{ produit.quantiteEnStock }}</td></tr> {# Changed from Stock Initial #}
             <tr><th>Stock Minimum</th><td>{{ produit.stockMinimum }}</td></tr>
-            <tr><th>Prix Achat</th><td>{{ produit.prixAchat|number_format(2, ',', ' ') }} Ar</td></tr>
             <tr><th>Prix Vente</th><td>{{ produit.prixVente|number_format(2, ',', ' ') }} Ar</td></tr>
-            <tr>
-                <th>Date Peremption</th>
-                <td>{{ produit.datePeremption ? produit.datePeremption|date('Y-m-d') : '' }}</td>
-            </tr>
             <tr>
                 <th>Créé le</th>
                 <td>{{ produit.createdAt ? produit.createdAt|date('d/m/Y H:i') : '' }}</td>
@@ -32,6 +27,32 @@
             <tr><th>Unité de base</th><td>{{ produit.uniteDeBase ? produit.uniteDeBase.nom : '' }}</td></tr>
         </tbody>
     </table>
+
+    {% if produit.lots is not empty %} {# Added #}
+        <h2 class="mt-4">Lots disponibles</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Numéro de Lot</th>
+                    <th>Quantité</th>
+                    <th>Prix Achat</th>
+                    <th>Date Péremption</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lot in produit.lots %}
+                    <tr>
+                        <td>{{ lot.numeroLot ?? 'N/A' }}</td>
+                        <td>{{ lot.quantite }}</td>
+                        <td>{{ lot.prixAchat|number_format(2, ',', ' ') }} Ar</td>
+                        <td>{{ lot.datePeremption ? lot.datePeremption|date('Y-m-d') : 'N/A' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="mt-4">Aucun lot disponible pour ce produit.</p>
+    {% endif %}
 
     {% if produit.conditionnements is not empty %}
         <h2 class="mt-4">Conditionnements</h2>

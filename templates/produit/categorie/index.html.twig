@@ -7,6 +7,9 @@
         <tr class="category-level-{{ level }}">
             <td style="padding-left: {{ 20 * level }}px; {% if level == 0 %}font-weight: bold;{% endif %}">
                 {{ categorie.nom }}
+                {% if categorie.abbreviation %}
+                    ({{ categorie.abbreviation }})
+                {% endif %}
             </td>
             <td>{{ categorie.createdAt ? categorie.createdAt|date('d/m/Y H:i') : '' }}</td>
             <td>{{ categorie.updatedAt ? categorie.updatedAt|date('d/m/Y H:i') : '' }}</td>
@@ -44,7 +47,7 @@
             {{ _self.category_tree(categories, 0) }}
         {% else %}
             <tr>
-                <td colspan="2" class="text-center">Aucune catégorie trouvée.</td>
+                <td colspan="3" class="text-center">Aucune catégorie trouvée.</td>
             </tr>
         {% endif %}
         </tbody>

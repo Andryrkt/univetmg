@@ -21,6 +21,9 @@ class Categorie
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $abbreviation = null;
+
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'enfant')]
     private ?self $parent = null;
 
@@ -55,6 +58,18 @@ class Categorie
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getAbbreviation(): ?string
+    {
+        return $this->abbreviation;
+    }
+
+    public function setAbbreviation(?string $abbreviation): static
+    {
+        $this->abbreviation = $abbreviation;
 
         return $this;
     }

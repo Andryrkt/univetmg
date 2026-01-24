@@ -3,6 +3,7 @@
 namespace App\Entity\Produit;
 
 use App\Entity\Admin\Fournisseur;
+use App\Entity\Stock\Lot;
 use App\Entity\Stock\MouvementStock;
 use App\Entity\Unite\Conditionnement;
 use App\Entity\Unite\Unite;
@@ -35,20 +36,10 @@ class Produit
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    private ?float $stockInitial = null;
-
-    #[ORM\Column]
-    #[Assert\NotBlank]
     private ?float $stockMinimum = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $prixAchat = null;
-
-    #[ORM\Column(nullable: true)]
     private ?float $prixVente = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $datePeremption = null;
 
     /**
      * @var Collection<int, Conditionnement>
@@ -68,22 +59,39 @@ class Produit
     private ?Fournisseur $fournisseur = null;
 
     /**
-     * @var Collection<int, MouvementStock>
+     * @var Collection<int, Lot>
      */
-    #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'produit', orphanRemoval: true)]
-    private Collection $mouvementsStock;
+    #[ORM\OneToMany(targetEntity: Lot::class, mappedBy: 'produit', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $lots;
 
     public function __construct()
     {
         $this->conditionnements = new ArrayCollection();
-        $this->mouvementsStock = new ArrayCollection();
+        $this->lots = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
     public function generateCode(): void
     {
         if (empty($this->code)) {
-            $this->code = 'PROD-' . (new \DateTime())->format('ymd') . '-' . strtoupper(substr(uniqid(), -4));
+            $prefix = 'PROD';
+            
+            if ($this->categorie) {
+                $categorie = $this->categorie;
+                $parent = $categorie->getParent();
+                
+                if ($parent) {
+                    // Si un parent existe : ABBR_PARENT/ABBR_ENFANT
+                    $prefixParent = $parent->getAbbreviation() ?: strtoupper(substr($parent->getNom(), 0, 3));
+                    $prefixEnfant = $categorie->getAbbreviation() ?: strtoupper(substr($categorie->getNom(), 0, 3));
+                    $prefix = $prefixParent . '/' . $prefixEnfant;
+                } else {
+                    // Si pas de parent : ABBR_CATEGORIE
+                    $prefix = $categorie->getAbbreviation() ?: strtoupper(substr($categorie->getNom(), 0, 3));
+                }
+            }
+            
+            $this->code = $prefix . '-' . strtoupper(substr(uniqid(), -4));
         }
     }
 
@@ -128,18 +136,6 @@ class Produit
         return $this;
     }
 
-    public function getStockInitial(): ?float
-    {
-        return $this->stockInitial;
-    }
-
-    public function setStockInitial(float $stockInitial): static
-    {
-        $this->stockInitial = $stockInitial;
-
-        return $this;
-    }
-
     public function getStockMinimum(): ?float
     {
         return $this->stockMinimum;
@@ -152,18 +148,6 @@ class Produit
         return $this;
     }
 
-    public function getPrixAchat(): ?float
-    {
-        return $this->prixAchat;
-    }
-
-    public function setPrixAchat(?float $prixAchat): static
-    {
-        $this->prixAchat = $prixAchat;
-
-        return $this;
-    }
-
     public function getPrixVente(): ?float
     {
         return $this->prixVente;
@@ -172,18 +156,6 @@ class Produit
     public function setPrixVente(?float $prixVente): static
     {
         $this->prixVente = $prixVente;
-
-        return $this;
-    }
-
-    public function getDatePeremption(): ?\DateTime
-    {
-        return $this->datePeremption;
-    }
-
-    public function setDatePeremption(?\DateTime $datePeremption): static
-    {
-        $this->datePeremption = $datePeremption;
 
         return $this;
     }
@@ -254,38 +226,50 @@ class Produit
         return $this;
     }
 
-    /**
-     * @return Collection<int, MouvementStock>
-     */
-    public function getMouvementsStock(): Collection
+    public function __toString(): string
     {
-        return $this->mouvementsStock;
+        return $this->nom ?? '';
     }
 
-    public function addMouvementStock(MouvementStock $mouvementStock): static
+    /**
+     * @return Collection<int, Lot>
+     */
+    public function getLots(): Collection
     {
-        if (!$this->mouvementsStock->contains($mouvementStock)) {
-            $this->mouvementsStock->add($mouvementStock);
-            $mouvementStock->setProduit($this);
+        return $this->lots;
+    }
+
+    public function addLot(Lot $lot): static
+    {
+        if (!$this->lots->contains($lot)) {
+            $this->lots->add($lot);
+            $lot->setProduit($this);
         }
 
         return $this;
     }
 
-    public function removeMouvementStock(MouvementStock $mouvementStock): static
+    public function removeLot(Lot $lot): static
     {
-        if ($this->mouvementsStock->removeElement($mouvementStock)) {
+        if ($this->lots->removeElement($lot)) {
             // set the owning side to null (unless already changed)
-            if ($mouvementStock->getProduit() === $this) {
-                $mouvementStock->setProduit(null);
+            if ($lot->getProduit() === $this) {
+                $lot->setProduit(null);
             }
         }
 
         return $this;
     }
 
-    public function __toString(): string
+    /**
+     * Calcule la quantité totale en stock en additionnant les quantités de tous les lots.
+     */
+    public function getQuantiteEnStock(): float
     {
-        return $this->nom ?? '';
+        $total = 0.0;
+        foreach ($this->lots as $lot) {
+            $total += $lot->getQuantite();
+        }
+        return $total;
     }
 }

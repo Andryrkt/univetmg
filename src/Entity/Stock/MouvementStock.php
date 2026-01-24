@@ -2,7 +2,6 @@
 
 namespace App\Entity\Stock;
 
-use App\Entity\Produit\Produit;
 use App\Entity\User;
 use App\Enum\TypeMouvement;
 use App\Repository\Stock\MouvementStockRepository;
@@ -39,7 +38,7 @@ class MouvementStock
 
     #[ORM\ManyToOne(inversedBy: 'mouvementsStock')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Produit $produit = null;
+    private ?Lot $lot = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -126,14 +125,14 @@ class MouvementStock
         return $this;
     }
 
-    public function getProduit(): ?Produit
+    public function getLot(): ?Lot
     {
-        return $this->produit;
+        return $this->lot;
     }
 
-    public function setProduit(?Produit $produit): static
+    public function setLot(?Lot $lot): static
     {
-        $this->produit = $produit;
+        $this->lot = $lot;
 
         return $this;
     }
@@ -148,5 +147,13 @@ class MouvementStock
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * Helper method to get the related Product via the Lot.
+     */
+    public function getProduit(): ?\App\Entity\Produit\Produit
+    {
+        return $this->lot?->getProduit();
     }
 }
