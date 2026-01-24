@@ -37,6 +37,18 @@ class LigneVente
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prixUnitaire = null;
 
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $prixCatalogue = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $tauxRemise = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $montantRemise = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $typeRemise = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $sousTotal = null;
 
@@ -131,6 +143,54 @@ class LigneVente
         return $this;
     }
 
+    public function getPrixCatalogue(): ?string
+    {
+        return $this->prixCatalogue;
+    }
+
+    public function setPrixCatalogue(?string $prixCatalogue): static
+    {
+        $this->prixCatalogue = $prixCatalogue;
+
+        return $this;
+    }
+
+    public function getTauxRemise(): ?float
+    {
+        return $this->tauxRemise;
+    }
+
+    public function setTauxRemise(?float $tauxRemise): static
+    {
+        $this->tauxRemise = $tauxRemise;
+
+        return $this;
+    }
+
+    public function getMontantRemise(): ?string
+    {
+        return $this->montantRemise;
+    }
+
+    public function setMontantRemise(?string $montantRemise): static
+    {
+        $this->montantRemise = $montantRemise;
+
+        return $this;
+    }
+
+    public function getTypeRemise(): ?string
+    {
+        return $this->typeRemise;
+    }
+
+    public function setTypeRemise(?string $typeRemise): static
+    {
+        $this->typeRemise = $typeRemise;
+
+        return $this;
+    }
+
     private function calculateSousTotal(): void
     {
         if ($this->quantite !== null && $this->prixUnitaire !== null) {
@@ -138,3 +198,4 @@ class LigneVente
         }
     }
 }
+

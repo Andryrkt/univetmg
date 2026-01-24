@@ -43,7 +43,8 @@ class ProduitType extends AbstractType
             ])
             ->add('code', TextType::class, [
                 'required' => false,
-                'label' => 'Code *',
+                'label' => 'Code',
+                'disabled' => true,
                 'attr' => [
                     'class' => 'form-control',
                 ],
@@ -74,23 +75,31 @@ class ProduitType extends AbstractType
             ->add('prixAchat', MoneyType::class, [
                 'required' => false,
                 'currency' => 'MGA', // ou EUR selon ton cas
+                'grouping' => true,
+                'attr' => [
+                    'class' => 'form-control js-format-thousands',
+                ]
             ])
             ->add('prixVente', MoneyType::class, [
                 'required' => false,
                 'currency' => 'MGA',
+                'grouping' => true,
+                'attr' => [
+                    'class' => 'form-control js-format-thousands',
+                ]
             ])
             ->add('stockInitial', NumberType::class, [
                 'required' => false,
                 'label' => 'Stock initial',
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'form-control js-numeric-input',
                 ],
             ])
             ->add('stockMinimum', NumberType::class, [
                 'required' => false,
                 'label' => 'Stock minimum',
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'form-control js-numeric-input',
                 ],
             ])
             ->add('datePeremption', DateType::class, [

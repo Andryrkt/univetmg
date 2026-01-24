@@ -1,0 +1,61 @@
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Période</th>
+                <th>Remise</th>
+                <th>Produits</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for promotion in promotions %}
+            <tr>
+                <td><strong>{{ promotion.nom }}</strong></td>
+                <td>
+                    <small>Du {{ promotion.dateDebut|date('d/m/Y') }}<br>au {{ promotion.dateFin|date('d/m/Y') }}</small>
+                </td>
+                <td>
+                    {% if promotion.tauxRemise %}
+                        <span class="badge bg-info text-dark">-{{ promotion.tauxRemise }}%</span>
+                    {% else %}
+                        <span class="badge bg-info text-dark">-{{ promotion.montantRemise|number_format(0, '.', ' ') }} MGA</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-secondary">{{ promotion.produits|length }} produit(s)</span>
+                </td>
+                <td>
+                    {% if status == 'active' %}
+                        <span class="badge bg-success">En cours</span>
+                    {% elseif status == 'upcoming' %}
+                        <span class="badge bg-warning text-dark">Planifiée</span>
+                    {% else %}
+                        <span class="badge bg-danger">Terminée</span>
+                    {% endif %}
+                    
+                    {% if not promotion.actif %}
+                        <span class="badge bg-dark">Désactivée</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ path('app_promotion_show', {'id': promotion.id}) }}" class="btn btn-sm btn-info text-white">Détails</a>
+                        <a href="{{ path('app_promotion_edit', {'id': promotion.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        <form method="post" action="{{ path('app_promotion_delete', {'id': promotion.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette promotion ?');" style="display: inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ promotion.id) }}">
+                            <button class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-4 text-muted">Aucune promotion dans cette catégorie</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

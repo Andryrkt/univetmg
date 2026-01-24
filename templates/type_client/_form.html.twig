@@ -1,0 +1,26 @@
+{{ form_start(form) }}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    {{ form_row(form.nom) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.tauxRemise) }}
+                </div>
+            </div>
+            
+            {{ form_row(form.description) }}
+            
+            <div class="form-check form-switch mb-3">
+                {{ form_widget(form.actif) }}
+                {{ form_label(form.actif) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
+        <a href="{{ path('app_type_client_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+{{ form_end(form) }}

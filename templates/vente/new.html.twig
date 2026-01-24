@@ -68,9 +68,13 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initVenteForm() {
             const container = document.getElementById('lignes-container');
+            if (!container) return;
+
             const addButton = document.querySelector('.add-ligne');
+            if (!addButton) return;
+
             let index = container.querySelectorAll('tr.ligne-item').length;
 
             addButton.addEventListener('click', function() {
@@ -178,13 +182,6 @@
                 if (quantiteInput) quantiteInput.addEventListener('input', () => updateRowTotal(row));
                 if (prixInput) prixInput.addEventListener('input', () => updateRowTotal(row));
                 
-                // Initialize if modifying (and data exists)
-                // Note: In edit mode, we might need to pre-select the correct unit.
-                // This script re-fetches units on product change, but for existing rows in Edit mode,
-                // the Units are already rendered by Symfony (assuming we passed all units or the correct ones).
-                // However, LigneVenteType passes ALL units currently.
-                // Optimally we should just keep it working.
-                
                 // Hack: recover base price if product is already selected
                  if (produitSelect && produitSelect.value) {
                      const selectedOption = produitSelect.options[produitSelect.selectedIndex];
@@ -220,6 +217,9 @@
             }
             
             document.querySelectorAll('.ligne-item').forEach(attachEvents);
-        });
+        }
+
+        // Initialize immediately as the script is executed by Turbo after body replacement
+        initVenteForm();
     </script>
 {% endblock %}

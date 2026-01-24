@@ -21,6 +21,9 @@ class Conditionnement
     #[ORM\Column]
     private ?float $quantite = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $prixVente = null;
+
     #[ORM\ManyToOne(inversedBy: 'conditionnements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
@@ -42,6 +45,18 @@ class Conditionnement
     public function setQuantite(float $quantite): static
     {
         $this->quantite = $quantite;
+
+        return $this;
+    }
+
+    public function getPrixVente(): ?float
+    {
+        return $this->prixVente;
+    }
+
+    public function setPrixVente(?float $prixVente): static
+    {
+        $this->prixVente = $prixVente;
 
         return $this;
     }

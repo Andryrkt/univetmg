@@ -72,6 +72,8 @@
                         <tr>
                             <th>Produit</th>
                             <th class="text-center">Unité</th>
+                            <th class="text-end">Prix de base</th>
+                            <th class="text-center">Remise</th>
                             <th class="text-end">Prix Unitaire</th>
                             <th class="text-center">Quantité</th>
                             <th class="text-end">Sous-Total</th>
@@ -82,16 +84,49 @@
                             <tr>
                                 <td>{{ ligne.produit.nom }}</td>
                                 <td class="text-center">{{ ligne.unite ? ligne.unite.nom : ligne.produit.uniteDeBase.nom }}</td>
-                                <td class="text-end">{{ ligne.prixUnitaire|number_format(2, ',', ' ') }} Ar</td>
+                                <td class="text-end">
+                                    {% if ligne.prixCatalogue and ligne.prixCatalogue != ligne.prixUnitaire %}
+                                        <del class="text-muted small">{{ ligne.prixCatalogue|number_format(0, ',', ' ') }}</del>
+                                    {% else %}
+                                        {{ ligne.prixUnitaire|number_format(0, ',', ' ') }}
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if ligne.tauxRemise and ligne.tauxRemise > 0 %}
+                                        <span class="badge bg-info text-dark">-{{ ligne.tauxRemise }}%</span>
+                                        {% if ligne.typeRemise %}
+                                            <br><small class="text-muted">{{ ligne.typeRemise }}</small>
+                                        {% endif %}
+                                    {% elseif ligne.montantRemise and ligne.montantRemise > 0 %}
+                                        <span class="badge bg-info text-dark">-{{ ligne.montantRemise|number_format(0, ',', ' ') }}</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="text-end fw-bold">{{ ligne.prixUnitaire|number_format(0, ',', ' ') }} Ar</td>
                                 <td class="text-center">{{ ligne.quantite }}</td>
-                                <td class="text-end">{{ ligne.sousTotal|number_format(2, ',', ' ') }} Ar</td>
+                                <td class="text-end fw-bold">{{ ligne.sousTotal|number_format(0, ',', ' ') }} Ar</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot>
+                        {% set totalRemise = 0 %}
+                        {% for ligne in vente.ligneVentes %}
+                            {% if ligne.montantRemise %}
+                                {% set totalRemise = totalRemise + (ligne.montantRemise * ligne.quantite) %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if totalRemise > 0 %}
                         <tr>
-                            <th colspan="4" class="text-end">Total</th>
-                            <th class="text-end fw-bold">{{ vente.total|number_format(2, ',', ' ') }} Ar</th>
+                            <th colspan="6" class="text-end text-success">Total Économisé</th>
+                            <th class="text-end text-success">-{{ totalRemise|number_format(0, ',', ' ') }} Ar</th>
+                        </tr>
+                        {% endif %}
+                        
+                        <tr>
+                            <th colspan="6" class="text-end fs-5">Total à Payer</th>
+                            <th class="text-end fs-5 fw-bold text-primary">{{ vente.total|number_format(0, ',', ' ') }} Ar</th>
                         </tr>
                     </tfoot>
                 </table>

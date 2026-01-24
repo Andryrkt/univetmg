@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Promotion{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Promotion : {{ promotion.nom }}</h1>
+            <div>
+                <a href="{{ path('app_promotion_edit', {'id': promotion.id}) }}" class="btn btn-warning">Modifier</a>
+                <a href="{{ path('app_promotion_index') }}" class="btn btn-secondary">Retour</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Résumé</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Statut
+                                {% if promotion.isCurrentlyActive %}
+                                    <span class="badge bg-success">Active</span>
+                                {% elseif promotion.isExpired %}
+                                    <span class="badge bg-danger">Expirée</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">Planifiée</span>
+                                {% endif %}
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Remise
+                                {% if promotion.tauxRemise %}
+                                    <span class="badge bg-info text-dark">-{{ promotion.tauxRemise }}%</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">-{{ promotion.montantRemise|number_format(0, '.', ' ') }} MGA</span>
+                                {% endif %}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Du :</strong> {{ promotion.dateDebut|date('d/m/Y H:i') }}<br>
+                                <strong>Au :</strong> {{ promotion.dateFin|date('d/m/Y H:i') }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Produits Concernés ({{ promotion.produits|length }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Nom</th>
+                                        <th>Prix de base</th>
+                                        <th>Prix promo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for produit in promotion.produits %}
+                                    <tr>
+                                        <td>{{ produit.code }}</td>
+                                        <td>{{ produit.nom }}</td>
+                                        <td>{{ produit.prixVente|number_format(0, '.', ' ') }} MGA</td>
+                                        <td class="text-success fw-bold">
+                                            {% if promotion.tauxRemise %}
+                                                {{ (produit.prixVente * (1 - promotion.tauxRemise / 100))|number_format(0, '.', ' ') }} MGA
+                                            {% else %}
+                                                {{ (produit.prixVente - promotion.montantRemise)|number_format(0, '.', ' ') }} MGA
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

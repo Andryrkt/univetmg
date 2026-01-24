@@ -24,10 +24,11 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th style="width: 40%;">Produit</th>
+                            <th style="width: 30%;">Produit</th>
+                            <th style="width: 15%;">Unité</th>
                             <th style="width: 15%;">Quantité</th>
                             <th style="width: 20%;">Prix Unitaire</th>
-                            <th style="width: 20%;">Sous-Total</th>
+                            <th style="width: 15%;">Sous-Total</th>
                             <th style="width: 5%;">Actions</th>
                         </tr>
                     </thead>
@@ -36,21 +37,22 @@
                         {% for ligne in form.ligneVentes %}
                             <tr class="ligne-item">
                                 <td>{{ form_widget(ligne.produit) }}</td>
+                                <td>{{ form_widget(ligne.unite) }}</td>
                                 <td>{{ form_widget(ligne.quantite) }}</td>
                                 <td>{{ form_widget(ligne.prixUnitaire) }}</td>
-                                <td><input type="text" class="form-control sous-total-display" readonly value="{{ ligne.vars.value.sousTotal }}"></td>
+                                <td><input type="text" class="form-control sous-total-display" readonly value="{{ (ligne.vars.value.quantite * ligne.vars.value.prixUnitaire)|number_format(2, ',', ' ') }} Ar"></td>
                                 <td><button type="button" class="btn btn-danger btn-sm remove-row">&times;</button></td>
                             </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <button type="button" class="btn btn-success add-ligne">Ajouter un produit</button>
                             </td>
                         </tr>
                         <tr>
-                            <th colspan="3" class="text-end">Total</th>
+                            <th colspan="4" class="text-end">Total</th>
                             <th class="text-end total-display fs-4">{{ vente.total|number_format(2, ',', ' ') }} Ar</th>
                             <th></th>
                         </tr>
@@ -65,11 +67,14 @@
         {{ form_end(form) }}
     </div>
 
-    {# Reuse the same JS as new.html.twig. Ideally, extract to asset file. #}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initVenteForm() {
             const container = document.getElementById('lignes-container');
+            if (!container) return;
+
             const addButton = document.querySelector('.add-ligne');
+            if (!addButton) return;
+
             let index = container.querySelectorAll('tr.ligne-item').length;
 
             addButton.addEventListener('click', function() {
@@ -80,10 +85,11 @@
                 tempDiv.innerHTML = newForm;
                 
                 const produitSelect = tempDiv.querySelector('.produit-select');
+                const uniteSelect = tempDiv.querySelector('.unite-select');
                 const quantiteInput = tempDiv.querySelector('.quantite-input');
                 const prixInput = tempDiv.querySelector('.prix-input');
 
-                 if (!produitSelect || !quantiteInput || !prixInput) {
+                if (!produitSelect || !uniteSelect || !quantiteInput || !prixInput) {
                     console.error("Structure du formulaire inattendue.");
                     return;
                 }
@@ -92,6 +98,7 @@
                 tr.classList.add('ligne-item');
                 
                 const tdProduit = document.createElement('td'); tdProduit.appendChild(produitSelect);
+                const tdUnite = document.createElement('td'); tdUnite.appendChild(uniteSelect);
                 const tdQuantite = document.createElement('td'); tdQuantite.appendChild(quantiteInput);
                 const tdPrix = document.createElement('td'); tdPrix.appendChild(prixInput);
                 const tdSousTotal = document.createElement('td');
@@ -99,7 +106,7 @@
                 const tdActions = document.createElement('td');
                 tdActions.innerHTML = '<button type="button" class="btn btn-danger btn-sm remove-row">&times;</button>';
                 
-                tr.appendChild(tdProduit); tr.appendChild(tdQuantite); tr.appendChild(tdPrix); tr.appendChild(tdSousTotal); tr.appendChild(tdActions);
+                tr.appendChild(tdProduit); tr.appendChild(tdUnite); tr.appendChild(tdQuantite); tr.appendChild(tdPrix); tr.appendChild(tdSousTotal); tr.appendChild(tdActions);
                 
                 container.appendChild(tr);
                 attachEvents(tr);
@@ -113,27 +120,71 @@
                 }
             });
 
+            // Gestion pour recharger les unités
+            function loadUnites(produitId, uniteSelect, prixInput, row) {
+                uniteSelect.innerHTML = '<option>Chargement...</option>';
+                
+                fetch(`/api/produit/${produitId}/unites`)
+                    .then(res => res.json())
+                    .then(data => {
+                        uniteSelect.innerHTML = '';
+                        data.forEach(u => {
+                            const option = document.createElement('option');
+                            option.value = u.id;
+                            option.textContent = u.nom + (u.facteur != 1 ? ` (x${u.facteur})` : '');
+                            option.dataset.facteur = u.facteur;
+                            uniteSelect.appendChild(option);
+                        });
+                        // Trigger change to update price
+                        uniteSelect.dispatchEvent(new Event('change'));
+                    });
+            }
+
             function attachEvents(row) {
                 const produitSelect = row.querySelector('.produit-select');
+                const uniteSelect = row.querySelector('.unite-select');
                 const quantiteInput = row.querySelector('.quantite-input');
                 const prixInput = row.querySelector('.prix-input');
                 
+                // Store base price to recalculate when unit changes
+                let basePrice = 0;
+
                 if (produitSelect) {
                     produitSelect.addEventListener('change', function() {
                         const selectedOption = this.options[this.selectedIndex];
-                        const prix = selectedOption.dataset.prix;
-                        if (prix && prixInput) {
-                            prixInput.value = prix;
-                            updateRowTotal(row);
+                        basePrice = parseFloat(selectedOption.dataset.prix) || 0;
+                        const produitId = this.value;
+
+                        if (produitId) {
+                            loadUnites(produitId, uniteSelect, prixInput, row);
+                        } else {
+                             uniteSelect.innerHTML = '';
                         }
+                    });
+                }
+                
+                if (uniteSelect) {
+                    uniteSelect.addEventListener('change', function() {
+                         const selectedOption = this.options[this.selectedIndex];
+                         if (selectedOption) {
+                             const facteur = parseFloat(selectedOption.dataset.facteur) || 1;
+                             const newPrice = basePrice * facteur;
+                             prixInput.value = newPrice;
+                             updateRowTotal(row);
+                         }
                     });
                 }
                 
                 if (quantiteInput) quantiteInput.addEventListener('input', () => updateRowTotal(row));
                 if (prixInput) prixInput.addEventListener('input', () => updateRowTotal(row));
                 
-                // Initialize row total if values exist
-                updateRowTotal(row);
+                // Hack: recover base price if product is already selected
+                 if (produitSelect && produitSelect.value) {
+                     const selectedOption = produitSelect.options[produitSelect.selectedIndex];
+                     basePrice = parseFloat(selectedOption.dataset.prix) || 0;
+                 }
+                 
+                 updateRowTotal(row);
             }
 
             function updateRowTotal(row) {
@@ -162,6 +213,9 @@
             }
             
             document.querySelectorAll('.ligne-item').forEach(attachEvents);
-        });
+        }
+
+        // Initialize immediately as the script is executed by Turbo after body replacement
+        initVenteForm();
     </script>
 {% endblock %}

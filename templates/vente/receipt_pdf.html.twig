@@ -107,16 +107,41 @@
             <div class="product-line">
                 <div class="product-name">{{ ligne.produit.nom }}</div>
                 <div class="product-details">
-                    <span>{{ ligne.quantite }} {{ ligne.unite ? ligne.unite.nom : ligne.produit.uniteDeBase.nom }} x {{ ligne.prixUnitaire|number_format(0, ',', ' ') }} Ar</span>
+                    <span>
+                        {{ ligne.quantite }} {{ ligne.unite ? ligne.unite.nom : ligne.produit.uniteDeBase.nom }} x 
+                        {% if ligne.prixCatalogue and ligne.prixCatalogue != ligne.prixUnitaire %}
+                            <span style="text-decoration: line-through; font-size: 7pt;">{{ ligne.prixCatalogue|number_format(0, ',', ' ') }}</span>
+                        {% endif %}
+                        {{ ligne.prixUnitaire|number_format(0, ',', ' ') }} Ar
+                    </span>
                     <span>{{ ligne.sousTotal|number_format(0, ',', ' ') }} Ar</span>
                 </div>
+                {% if ligne.tauxRemise and ligne.tauxRemise > 0 %}
+                    <div style="font-size: 7pt; font-style: italic;">Remise: -{{ ligne.tauxRemise }}% ({{ ligne.typeRemise }})</div>
+                {% elseif ligne.montantRemise and ligne.montantRemise > 0 %}
+                    <div style="font-size: 7pt; font-style: italic;">Remise: -{{ ligne.montantRemise|number_format(0, ',', ' ') }} Ar</div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
 
     <div class="total-section">
+        {% set totalRemise = 0 %}
+        {% for ligne in vente.ligneVentes %}
+            {% if ligne.montantRemise %}
+                {% set totalRemise = totalRemise + (ligne.montantRemise * ligne.quantite) %}
+            {% endif %}
+        {% endfor %}
+        
+        {% if totalRemise > 0 %}
+        <div class="total-line" style="font-size: 9pt; border-top: none;">
+            <span>ÉCONOMIE</span>
+            <span>-{{ totalRemise|number_format(0, ',', ' ') }} Ar</span>
+        </div>
+        {% endif %}
+        
         <div class="total-line">
-            <span>TOTAL</span>
+            <span>TOTAL À PAYER</span>
             <span>{{ vente.total|number_format(0, ',', ' ') }} Ar</span>
         </div>
     </div>

@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import './js/collection_type.js';
 import './js/category_selection.js';
+import './js/numeric_input_validation.js';
 
 // Fix for Symfony Web Profiler + Turbo
 document.addEventListener('turbo:before-cache', () => {

@@ -8,6 +8,7 @@ use App\Form\Vente\VenteType;
 use App\Repository\Vente\VenteRepository;
 use App\Service\StockManager;
 use App\Service\PdfGenerator;
+use App\Service\PricingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ class VenteController extends AbstractController
     }
 
     #[Route('/new', name: 'app_vente_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, StockManager $stockManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, StockManager $stockManager, PricingService $pricingService): Response
     {
         $vente = new Vente();
         // Default Client? No, let user choose.
@@ -42,9 +43,7 @@ class VenteController extends AbstractController
             $numeroFacture = sprintf('V-%s-%s', date('YmdHis'), substr(uniqid(), -4));
             $vente->setNumeroFacture($numeroFacture);
 
-            $vente->recalculateTotal();
-
-            // Calculate Conversion Factors
+            // Calculate Conversion Factors and Pricing
             foreach ($vente->getLigneVentes() as $ligne) {
                 $facteur = 1.0;
                 $produit = $ligne->getProduit();
@@ -67,7 +66,25 @@ class VenteController extends AbstractController
                    }
                 }
                 $ligne->setFacteurConversion($facteur);
+
+                // Calculate pricing with discounts
+                if ($produit) {
+                    $pricingResult = $pricingService->calculatePrice(
+                        $produit,
+                        $unite,
+                        $vente->getClient(),
+                        $ligne->getQuantite() ?? 1
+                    );
+
+                    $ligne->setPrixCatalogue((string) $pricingResult['prixCatalogue']);
+                    $ligne->setTauxRemise($pricingResult['tauxRemise']);
+                    $ligne->setMontantRemise((string) $pricingResult['montantRemise']);
+                    $ligne->setTypeRemise($pricingResult['typeRemise']);
+                    $ligne->setPrixUnitaire((string) $pricingResult['prixFinal']);
+                }
             }
+
+            $vente->recalculateTotal();
 
             // Process Stock if Validated
             if ($vente->getStatut() === StatutVente::VALIDEE) {
@@ -107,7 +124,7 @@ class VenteController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_vente_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Vente $vente, EntityManagerInterface $entityManager, StockManager $stockManager): Response
+    public function edit(Request $request, Vente $vente, EntityManagerInterface $entityManager, StockManager $stockManager, PricingService $pricingService): Response
     {
         if ($vente->getStatut() !== StatutVente::BROUILLON) {
             $this->addFlash('warning', 'Seules les ventes en brouillon peuvent être modifiées. Veuillez annuler cette vente si nécessaire.');
@@ -118,9 +135,7 @@ class VenteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $vente->recalculateTotal();
-
-            // Calculate Conversion Factors (Duplicate logic, could be moved to service or private method)
+            // Calculate Conversion Factors and Pricing
             foreach ($vente->getLigneVentes() as $ligne) {
                 $facteur = 1.0;
                 $produit = $ligne->getProduit();
@@ -141,7 +156,25 @@ class VenteController extends AbstractController
                    }
                 }
                 $ligne->setFacteurConversion($facteur);
+
+                // Calculate pricing with discounts
+                if ($produit) {
+                    $pricingResult = $pricingService->calculatePrice(
+                        $produit,
+                        $unite,
+                        $vente->getClient(),
+                        $ligne->getQuantite() ?? 1
+                    );
+
+                    $ligne->setPrixCatalogue((string) $pricingResult['prixCatalogue']);
+                    $ligne->setTauxRemise($pricingResult['tauxRemise']);
+                    $ligne->setMontantRemise((string) $pricingResult['montantRemise']);
+                    $ligne->setTypeRemise($pricingResult['typeRemise']);
+                    $ligne->setPrixUnitaire((string) $pricingResult['prixFinal']);
+                }
             }
+
+            $vente->recalculateTotal();
 
             // Check if status changed to VALIDEE
             if ($vente->getStatut() === StatutVente::VALIDEE) {

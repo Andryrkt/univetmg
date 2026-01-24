@@ -3,6 +3,8 @@
 namespace App\Form\Vente;
 
 use App\Entity\Vente\Client;
+use App\Entity\Vente\TypeClient;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -27,6 +29,15 @@ class ClientType extends AbstractType
                 'label' => 'Adresse',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'rows' => 3]
+            ])
+            ->add('typeClient', EntityType::class, [
+                'class' => TypeClient::class,
+                'choice_label' => 'nom',
+                'label' => 'Type de client',
+                'required' => false,
+                'placeholder' => 'Sélectionnez un type de client',
+                'attr' => ['class' => 'form-select'],
+                'help' => 'Le type de client détermine les remises applicables'
             ])
         ;
     }

@@ -1,0 +1,59 @@
+{{ form_start(form) }}
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Informations Générales</h5>
+        </div>
+        <div class="card-body">
+            {{ form_row(form.nom) }}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.dateDebut) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.dateFin) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Type de Remise</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info py-2">
+                <small><i class="fas fa-info-circle"></i> Choisissez soit un pourcentage, soit un montant fixe.</small>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.tauxRemise) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.montantRemise) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Produits Concernés</h5>
+        </div>
+        <div class="card-body">
+            {{ form_row(form.produits) }}
+            
+            <hr>
+            
+            <div class="form-check form-switch mb-3">
+                {{ form_widget(form.actif) }}
+                {{ form_label(form.actif) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 mb-5">
+        <button class="btn btn-success btn-lg">{{ button_label|default('Enregistrer la Promotion') }}</button>
+        <a href="{{ path('app_promotion_index') }}" class="btn btn-secondary btn-lg">Annuler</a>
+    </div>
+{{ form_end(form) }}

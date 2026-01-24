@@ -28,6 +28,10 @@ class Client
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'clients')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?TypeClient $typeClient = null;
+
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Vente::class)]
     private Collection $ventes;
 
@@ -86,6 +90,18 @@ class Client
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getTypeClient(): ?TypeClient
+    {
+        return $this->typeClient;
+    }
+
+    public function setTypeClient(?TypeClient $typeClient): static
+    {
+        $this->typeClient = $typeClient;
 
         return $this;
     }
