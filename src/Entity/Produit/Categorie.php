@@ -135,4 +135,21 @@ class Categorie
     {
         return $this->nom ?? '';
     }
+
+    /**
+     * Retourne le chemin complet de la catégorie (fil d'Ariane).
+     * @return Categorie[]
+     */
+    public function getPath(): array
+    {
+        $path = [];
+        $current = $this;
+
+        while ($current !== null) {
+            array_unshift($path, $current);
+            $current = $current->getParent();
+        }
+
+        return $path;
+    }
 }

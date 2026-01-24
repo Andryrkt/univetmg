@@ -33,6 +33,7 @@
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ path('app_conversion_standard_show', {'id': conversion_standard.id}) }}" class="btn btn-sm btn-info">Voir</a>
                         <a href="{{ path('app_conversion_standard_edit', {'id': conversion_standard.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        {{ include('conversion_standard/_delete_form.html.twig') }}
                     </div>
                 </td>
             </tr>

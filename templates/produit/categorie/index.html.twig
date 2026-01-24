@@ -5,8 +5,7 @@
 {% macro category_tree(categories, level) %}
     {% for categorie in categories %}
         <tr class="category-level-{{ level }}">
-            <td>
-                {% for i in 0..level %}{% if i > 0 %}&mdash;{% endif %}{% endfor %}
+            <td style="padding-left: {{ 20 * level }}px; {% if level == 0 %}font-weight: bold;{% endif %}">
                 {{ categorie.nom }}
             </td>
             <td>{{ categorie.createdAt ? categorie.createdAt|date('d/m/Y H:i') : '' }}</td>

@@ -47,6 +47,7 @@ final class CategorieController extends AbstractController
     {
         return $this->render('produit/categorie/show.html.twig', [
             'categorie' => $categorie,
+            'path' => $categorie->getPath(),
         ]);
     }
 

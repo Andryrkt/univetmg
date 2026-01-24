@@ -1,8 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail de la Catégorie{% endblock %}
+{% block title %}Détail de la Catégorie: {{ categorie.nom }}{% endblock %}
+
+{% macro category_list_tree(categories, level) %}
+    {% for child in categories %}
+        <li class="list-group-item" style="padding-left: {{ 15 + (20 * level) }}px;">
+            <a href="{{ path('app_produit_categorie_show', {'id': child.id}) }}">{{ child.nom }}</a>
+        </li>
+        {% if child.enfant is not empty %}
+            {{ _self.category_list_tree(child.enfant, level + 1) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
 
 {% block body %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% for item in path %}
+                {% if not loop.last %}
+                    <li class="breadcrumb-item"><a href="{{ path('app_produit_categorie_show', {'id': item.id}) }}">{{ item.nom }}</a></li>
+                {% else %}
+                    <li class="breadcrumb-item active" aria-current="page">{{ item.nom }}</li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+
     <h1>Détail de la Catégorie</h1>
 
     <table class="table table-bordered mt-4">
@@ -23,12 +46,6 @@
                 <th>Modifié le</th>
                 <td>{{ categorie.updatedAt ? categorie.updatedAt|date('d/m/Y H:i') : '' }}</td>
             </tr>
-            {% if categorie.parent %}
-                <tr>
-                    <th>Parent</th>
-                    <td><a href="{{ path('app_produit_categorie_show', {'id': categorie.parent.id}) }}">{{ categorie.parent.nom }}</a></td>
-                </tr>
-            {% endif %}
         </tbody>
     </table>
 
@@ -36,11 +53,7 @@
         <div class="mt-4">
             <h3>Sous-catégories</h3>
             <ul class="list-group">
-                {% for child in categorie.enfant %}
-                    <li class="list-group-item">
-                        <a href="{{ path('app_produit_categorie_show', {'id': child.id}) }}">{{ child.nom }}</a>
-                    </li>
-                {% endfor %}
+                {{ _self.category_list_tree(categorie.enfant, 0) }}
             </ul>
         </div>
     {% endif %}
