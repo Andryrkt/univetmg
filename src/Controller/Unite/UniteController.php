@@ -20,7 +20,7 @@ final class UniteController extends AbstractController
     public function index(UniteRepository $uniteRepository): Response
     {
         return $this->render('unite/unite/index.html.twig', [
-            'unites' => $uniteRepository->findAll(),
+            'unites' => $uniteRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 

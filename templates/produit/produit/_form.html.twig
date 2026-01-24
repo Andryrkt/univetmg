@@ -6,8 +6,10 @@
 <div class="row">
     <div class="col-md-6">
         {{ form_row(form.categorieParent) }}
-        <div id="category-container"></div>
-        {{ form_row(form.categorie) }}
+        <div id="category-container" class="mt-2"></div>
+        <div style="display: none;">
+            {{ form_row(form.categorie) }}
+        </div>
     </div>
     <div class="col-md-6">{{ form_row(form.uniteDeBase) }}</div>
 </div>

@@ -84,6 +84,7 @@ final class CategorieController extends AbstractController
     public function getSubCategories(Categorie $parent): Response
     {
         $subCategories = [];
+        // The collection is sorted thanks to #[ORM\OrderBy(['nom' => 'ASC'])] in Categorie entity
         foreach ($parent->getEnfant() as $subCategory) {
             $subCategories[] = [
                 'id' => $subCategory->getId(),

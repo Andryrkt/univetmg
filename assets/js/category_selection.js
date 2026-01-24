@@ -16,6 +16,7 @@ document.addEventListener('change', (event) => {
         return;
     }
 
+    console.log('Category selection logic triggered for:', select.id);
     handleCategoryChange(select, categoryContainer, finalCategoryInput, mainCategorySelect);
 });
 

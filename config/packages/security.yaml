@@ -37,9 +37,13 @@ security:
 
     access_control:
       - { path: ^/admin, roles: ROLE_ADMIN }
+      - { path: ^/produit, roles: ROLE_ADMIN }
+      - { path: ^/unite, roles: ROLE_ADMIN }
+      - { path: ^/stock, roles: ROLE_ADMIN }
+      - { path: ^/documentation, roles: ROLE_ADMIN }
+      - { path: ^/conversion/standard, roles: ROLE_ADMIN }
       - { path: ^/home, roles: ROLE_USER }
       - { path: ^/profile, roles: ROLE_USER }
-      - { path: ^/stock, roles: ROLE_USER }
       - { path: ^/login, roles: PUBLIC_ACCESS }
       - { path: ^/register, roles: PUBLIC_ACCESS }
       - { path: ^/reset-password, roles: PUBLIC_ACCESS }

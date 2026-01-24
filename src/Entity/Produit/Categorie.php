@@ -31,6 +31,7 @@ class Categorie
      * @var Collection<int, self>
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OrderBy(['nom' => 'ASC'])]
     private Collection $enfant;
 
     /**

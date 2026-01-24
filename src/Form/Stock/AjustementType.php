@@ -25,7 +25,7 @@ class AjustementType extends AbstractType
                 'label' => 'Produit *',
                 'placeholder' => 'Sélectionnez un produit',
                 'required' => true,
-                'attr' => ['class' => 'form-control js-produit-select'],
+                'attr' => ['class' => 'form-control js-produit-select tom-select'],
             ])
             ->add('lot', EntityType::class, [
                 'class' => Lot::class,

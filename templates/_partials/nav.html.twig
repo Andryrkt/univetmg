@@ -11,9 +11,11 @@
 				<li class="nav-item">
 					<a class="nav-link" href="{{ path('app_home_public') }}">Accueil</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_documentation') }}">Documentation</a>
-				</li>
+				{% if is_granted('ROLE_ADMIN') %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_documentation') }}">Documentation</a>
+					</li>
+				{% endif %}
 
 				{# Liens pour les administrateurs #}
 				{% if is_granted('ROLE_ADMIN') %}
@@ -46,7 +48,7 @@
 				{% endif %}
 
 				{# Menu Gestion de Stock #}
-				{% if app.user %}
+				{% if is_granted('ROLE_ADMIN') %}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownStock" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<i class="fas fa-boxes"></i> Stock

@@ -14,24 +14,26 @@ class FournisseurType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'Nom *',
                 'attr' => [
                     'class' => 'form-control',
                 ],
             ])
             ->add('telephone', TextType::class, [
-                'label' => 'Telephone',
+                'label' => 'Telephone *',
                 'attr' => [
                     'class' => 'form-control',
                 ],
             ])
             ->add('adresse', TextType::class, [
                 'label' => 'Adresse',
+                'required' => false,
                 'attr' => [
                     'class' => 'form-control',
                 ],
             ])
             ->add('email', TextType::class, [
+                'required' => false,
                 'label' => 'Email',
                 'attr' => [
                     'class' => 'form-control',

@@ -12,8 +12,12 @@ class UniteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('symbole')
+            ->add('nom', TextType::class, [
+                'label' => 'Nom *',
+            ])
+            ->add('symbole', TextType::class, [
+                'label' => 'Symbole *',
+            ])
         ;
     }
 

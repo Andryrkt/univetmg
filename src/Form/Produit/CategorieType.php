@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-
+use Doctrine\ORM\EntityRepository;
 
 class CategorieType extends AbstractType
 {
@@ -33,6 +33,10 @@ class CategorieType extends AbstractType
                 'choice_label' => 'nom',
                 'placeholder' => ' -- Selectionner une categorie parent --',
                 'required' => false,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                        ->orderBy('c.nom', 'ASC');
+                },
             ])
         ;
     }
