@@ -54,6 +54,12 @@ jobs:
           echo "Mise à jour du code..."
           cd /home/univetmg/univet || exit 1
 
+          echo "Nettoyage préventif..."
+          rm -rf var/log/*
+          rm -rf var/cache/*
+          rm -rf vendor
+          rm -rf ~/.composer/cache
+          
           git fetch origin main
           git reset --hard origin/main
           
