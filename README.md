@@ -64,4 +64,3 @@ do
         log "✅ Déploiement terminé !"
     fi
 done
-fsdfsq
