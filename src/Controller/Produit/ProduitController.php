@@ -15,10 +15,19 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProduitController extends AbstractController
 {
     #[Route('/', name: 'app_produit_index', methods: ['GET'])]
-    public function index(ProduitRepository $produitRepository): Response
+    public function index(Request $request, ProduitRepository $produitRepository): Response
     {
+        $query = $request->query->get('q');
+        
+        if ($query) {
+            $produits = $produitRepository->searchByNameOrCode($query);
+        } else {
+            $produits = $produitRepository->findBy([], ['id' => 'DESC']);
+        }
+
         return $this->render('produit/produit/index.html.twig', [
-            'produits' => $produitRepository->findBy([], ['id' => 'DESC']),
+            'produits' => $produits,
+            'currentSearch' => $query,
         ]);
     }
 

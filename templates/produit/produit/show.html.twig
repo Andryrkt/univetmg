@@ -61,6 +61,7 @@
                 <tr>
                     <th>Unité de Conditionnement</th>
                     <th>Quantité (en unité de base)</th>
+                    <th>Prix Vente</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
                     <tr>
                         <td>{{ conditionnement.unite.nom }}</td>
                         <td>{{ conditionnement.quantite }}</td>
+                        <td>{{ conditionnement.prixVente ? conditionnement.prixVente|number_format(2, ',', ' ') : 'N/A' }} Ar</td>
                     </tr>
                 {% endfor %}
             </tbody>
