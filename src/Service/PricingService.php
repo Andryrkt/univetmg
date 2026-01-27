@@ -159,7 +159,16 @@ class PricingService
         // Check conditionnements for this unit
         foreach ($produit->getConditionnements() as $conditionnement) {
             if ($conditionnement->getUnite()?->getId() === $unite->getId()) {
-                return $conditionnement->getPrixVente();
+                // If specific price is defined, use it
+                if ($conditionnement->getPrixVente() !== null) {
+                    return $conditionnement->getPrixVente();
+                }
+
+                // If no specific price, calculate based on base unit price * quantity
+                $basePrice = $produit->getPrixVente();
+                if ($basePrice !== null) {
+                    return $basePrice * $conditionnement->getQuantite();
+                }
             }
         }
 

@@ -34,6 +34,7 @@ class ProduitApiController extends AbstractController
                     'nom' => $conditionnement->getUnite()->getNom(),
                     'symbole' => $conditionnement->getUnite()->getSymbole(),
                     'facteur' => $conditionnement->getQuantite(), // Si 1 Caisse = 12 bouteilles, facteur = 12
+                    'prix' => $conditionnement->getPrixVente(), // specific price if set
                     'isBase' => false
                 ];
             }

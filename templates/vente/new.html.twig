@@ -133,6 +133,9 @@
                             option.value = u.id;
                             option.textContent = u.nom + (u.facteur != 1 ? ` (x${u.facteur})` : '');
                             option.dataset.facteur = u.facteur;
+                            if (u.prix !== null && u.prix !== undefined) {
+                                option.dataset.prixSpecifique = u.prix;
+                            }
                             uniteSelect.appendChild(option);
                         });
                         // Trigger change to update price
@@ -168,12 +171,18 @@
                          const selectedOption = this.options[this.selectedIndex];
                          if (selectedOption) {
                              const facteur = parseFloat(selectedOption.dataset.facteur) || 1;
-                             // Update unit price based on factor
-                             // Assuming basePrice is per base unit.
-                             // Price = Base Price * Factor
-                             const newPrice = basePrice * facteur;
+                             
+                             let newPrice;
+                             if (selectedOption.dataset.prixSpecifique) {
+                                 // Use specific price if defined
+                                 newPrice = parseFloat(selectedOption.dataset.prixSpecifique);
+                             } else {
+                                 // Otherwise calculate: Base Price * Factor
+                                 newPrice = basePrice * facteur;
+                             }
+                             
                              prixInput.value = newPrice;
-                             console.log(`Base: ${basePrice}, Facteur: ${facteur}, New: ${newPrice}`);
+                             console.log(`Base: ${basePrice}, Facteur: ${facteur}, Prix Specifique: ${selectedOption.dataset.prixSpecifique}, New: ${newPrice}`);
                              updateRowTotal(row);
                          }
                     });

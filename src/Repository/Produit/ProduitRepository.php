@@ -22,7 +22,7 @@ class ProduitRepository extends ServiceEntityRepository
     public function searchByNameOrCode(string $query): array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.nom LIKE :query OR p.code LIKE :query')
+            ->andWhere('LOWER(p.nom) LIKE LOWER(:query) OR LOWER(p.code) LIKE LOWER(:query)')
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('p.id', 'DESC')
             ->getQuery()
