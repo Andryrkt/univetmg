@@ -25,7 +25,7 @@ class ConditionnementType extends AbstractType
                 'label' => 'Quantité contenue (en unité de base)',
             ])
             ->add('prixVente', MoneyType::class, [
-                'label' => 'Prix de vente (optionnel)',
+                'label' => 'Prix du conditionnement (optionnel)',
                 'required' => false,
                 'currency' => 'MGA',
                 'help' => 'Prix de vente spécifique pour ce conditionnement. Laissez vide pour utiliser le prix du produit.'

@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ProduitType extends AbstractType
 {
@@ -85,8 +86,10 @@ class ProduitType extends AbstractType
             // Removed prixAchat field
             ->add('prixVente', MoneyType::class, [
                 'required' => false,
+                'label' => 'Prix de vente (Unité de base)',
                 'currency' => 'MGA',
                 'grouping' => true,
+                'help' => 'Prix pour une unité (ex: 1 comprimé, 1 ml)',
                 'attr' => [
                     'class' => 'form-control js-format-thousands',
                 ]
@@ -122,6 +125,13 @@ class ProduitType extends AbstractType
                 'by_reference' => false,
                 'label' => 'Lots du produit',
                 'entry_options' => ['label' => false],
+                'constraints' => [
+                    new Assert\Count([
+                        'min' => 1,
+                        'minMessage' => 'Vous devez ajouter au moins un lot pour définir le stock initial et le prix d\'achat.',
+                    ]),
+                    new Assert\Valid(),
+                ],
             ]);
     }
 
