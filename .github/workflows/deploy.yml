@@ -54,7 +54,13 @@ jobs:
           echo "Mise à jour du code..."
           cd /home/univetmg/univet || exit 1
 
+          echo "État du disque avant nettoyage :"
+          df -h
+          du -sh ./* | sort -rh | head -n 10
+          
           echo "Nettoyage préventif..."
+          rm -f error_log
+          rm -f *.log
           rm -rf var/log/*
           rm -rf var/cache/*
           rm -rf vendor
