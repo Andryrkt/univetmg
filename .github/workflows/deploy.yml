@@ -58,7 +58,7 @@ jobs:
           df -h
           du -sh ./* | sort -rh | head -n 10
           
-          echo "Nettoyage préventif..."
+          echo "Nettoyage préventif radical..."
           rm -f error_log
           rm -f *.log
           rm -rf var/log/*
@@ -66,15 +66,25 @@ jobs:
           rm -rf vendor
           rm -rf ~/.composer/cache
           
-          git fetch origin main
-          git reset --hard origin/main
+          echo "Réinitialisation du dépôt pour libérer de l'espace (Shallow Clone)..."
+          # Sauvegarde de la config locale (si présente)
+          if [ -f .env.local ]; then
+              cp .env.local ../univet_env_local.bak
+          fi
           
-          echo "Nettoyage Git agressif..."
-          git clean -fd
-          git gc --prune=now
-          git reflog expire --expire=now --all
+          # Suppression du dossier .git volumineux
+          rm -rf .git
           
-          git reset --hard origin/main
+          # Réinitialisation
+          git init
+          git remote add origin https://github.com/Andryrkt/univetmg.git
+          git fetch --depth 1 origin main
+          git reset --hard FETCH_HEAD
+          
+          # Restauration de la config
+          if [ -f ../univet_env_local.bak ]; then
+              mv ../univet_env_local.bak .env.local
+          fi
           
           echo "Commit déployé :"
           git rev-parse HEAD
