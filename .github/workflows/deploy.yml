@@ -63,6 +63,11 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
           
+          echo "Nettoyage Git agressif..."
+          git clean -fd
+          git gc --prune=now
+          git reflog expire --expire=now --all
+          
           git reset --hard origin/main
           
           echo "Commit déployé :"
