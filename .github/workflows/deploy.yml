@@ -35,6 +35,7 @@ jobs:
           ${{ runner.os }}-composer-
 
     - name: Install dependencies
+      working-directory: backend
       run: |
         composer install --no-interaction --no-dev --optimize-autoloader --no-scripts --prefer-dist
 
@@ -57,49 +58,49 @@ jobs:
           echo "État du disque avant nettoyage :"
           df -h
           du -sh ./* | sort -rh | head -n 10
-          
+
           echo "Nettoyage préventif radical..."
           rm -f error_log
           rm -f *.log
-          rm -rf var/log/*
-          rm -rf var/cache/*
-          rm -rf vendor
+          rm -rf backend/var/log/*
+          rm -rf backend/var/cache/*
+          rm -rf backend/vendor
           rm -rf ~/.composer/cache
-          
+
           echo "Réinitialisation du dépôt pour libérer de l'espace (Shallow Clone)..."
           # Sauvegarde de la config locale (si présente)
-          if [ -f .env.local ]; then
-              cp .env.local ../univet_env_local.bak
+          if [ -f backend/.env.local ]; then
+              cp backend/.env.local ../univet_env_local.bak
           fi
-          
+
           # Suppression du dossier .git volumineux
           rm -rf .git
-          
+
           # Réinitialisation
           git init
           git remote add origin https://github.com/Andryrkt/univetmg.git
           git fetch --depth 1 origin main
           git reset --hard FETCH_HEAD
-          
+
           # Restauration de la config
           if [ -f ../univet_env_local.bak ]; then
-              mv ../univet_env_local.bak .env.local
+              mv ../univet_env_local.bak backend/.env.local
           fi
-          
+
           echo "Commit déployé :"
           git rev-parse HEAD
 
+          cd backend || exit 1
+
           echo "Téléchargement de composer..."
           curl -sS https://getcomposer.org/installer | php
-          
+
           echo "Diagnostics Serveur:"
           php -v
           php composer.phar --version
           pwd
           ls -la
-          
-          echo "Forçage du timestamp pour index.php..."
-          
+
           echo "Forçage du timestamp pour index.php..."
           touch public/index.php
 
@@ -116,11 +117,11 @@ jobs:
           if [ ! -f .env.local ]; then
             echo "APP_SECRET=$(openssl rand -hex 16)" > .env.local
           fi
-          
+
           # Compilation des variables d'environnement pour la prod
           # Cela génère .env.local.php et force APP_ENV=prod
           php composer.phar dump-env prod
-          
+
           chmod 600 .env.local .env.local.php
 
 
@@ -137,7 +138,7 @@ jobs:
           # Tentative de correction des permissions avant suppression
           chmod -R 777 var/cache > /dev/null 2>&1 || true
           rm -rf var/cache/* > /dev/null 2>&1 || true
-          
+
           # Utilisation de cache:clear qui est plus robuste
           php bin/console cache:clear --env=prod --no-debug
           php bin/console cache:warmup --env=prod --no-debug
@@ -149,7 +150,7 @@ jobs:
 
           echo "Mise à jour du lien symbolique..."
           rm -f ~/public_html
-          ln -s /home/univetmg/univet/public ~/public_html
+          ln -s /home/univetmg/univet/backend/public ~/public_html
 
           echo "Déploiement terminé avec succès !"
           echo "Site : https://univet.mg/"

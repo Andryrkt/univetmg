@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="{{ path('app_home_public') }}">
+			<img src="{{ asset("/images/logo.jpg")}}" width="50" heigth="50" alt="logo de Univet">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a class="nav-link" href="{{ path('app_home_public') }}">Accueil</a>
+				</li>
+				{% if is_granted('ROLE_ADMIN') %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_documentation') }}">Documentation</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_conversion_standard_index') }}">Conversions Standard</a>
+					</li>
+				{% endif %}
+
+				{# La gestion des produits, unités, stock, ventes, clients, promotions et utilisateurs
+				   se fait désormais dans l'application React (voir frontend/). #}
+			</ul>
+
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+				{% if app.user %}
+					<li class="nav-item">
+						<span class="nav-link disabled">{{ app.user.userIdentifier }} ({{ app.user.roles|join(', ') }})</span>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+					</li>
+				{% else %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_register') }}">Inscription</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+</nav>

@@ -1,19 +1,6 @@
-###> symfony/framework-bundle ###
-/.env.local
-/.env.production
-/.env.*.local
-/config/secrets/prod/prod.*
-/var/
-/vendor/
+# Ce dépôt contient deux sous-projets, chacun avec son propre .gitignore :
+#   - backend/.gitignore  (Symfony)
+#   - frontend/.gitignore (React/Vite)
 
-/tests/
-###< symfony/framework-bundle ###
-
-###> phpunit/phpunit ###
-/phpunit.xml
-/.phpunit.cache/
-###< phpunit/phpunit ###
-
-###> pentatrion/vite-bundle ###
-/node_modules/
-###< pentatrion/vite-bundle ###
+.DS_Store
+Thumbs.db

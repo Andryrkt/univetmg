@@ -1,0 +1,23 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.production
+/.env.*.local
+/config/secrets/prod/prod.*
+/var/
+/vendor/
+
+/tests/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> pentatrion/vite-bundle ###
+/node_modules/
+###< pentatrion/vite-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

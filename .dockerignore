@@ -1,0 +1,10 @@
+.git
+.github
+node_modules
+vendor
+var
+tests
+documentation
+*.txt
+.env.local
+.env.local.php
