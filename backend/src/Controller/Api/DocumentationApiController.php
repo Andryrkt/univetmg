@@ -1,73 +1,82 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
+use League\CommonMark\CommonMarkConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-class DocumentationController extends AbstractController
+#[Route('/api/documentation')]
+class DocumentationApiController extends AbstractController
 {
     private const DOCUMENTATIONS = [
         'fonctionnelle' => [
             'label' => 'Documentation Fonctionnelle',
-            'icon' => 'fa-users',
-            'color' => 'primary',
             'items' => [
                 'entites' => [
                     'title' => 'Documentation des Entités',
                     'file' => 'entites.md',
-                    'icon' => 'fa-database',
-                    'description' => 'Structure et relations des entités de la base de données'
+                    'description' => 'Structure et relations des entités de la base de données',
                 ],
                 'gestion-stock' => [
                     'title' => 'Gestion du Stock',
                     'file' => 'gestion_stock.md',
-                    'icon' => 'fa-boxes',
-                    'description' => 'Guide complet sur la gestion des stocks et mouvements'
+                    'description' => 'Guide complet sur la gestion des stocks et mouvements',
                 ],
-            ]
+            ],
         ],
         'technique' => [
             'label' => 'Documentation Technique',
-            'icon' => 'fa-code',
-            'color' => 'success',
             'items' => [
                 'deploiement' => [
                     'title' => 'Code de Déploiement',
                     'file' => 'code_deploiement.md',
-                    'icon' => 'fa-rocket',
-                    'description' => 'Procédures de déploiement de l\'application'
+                    'description' => 'Procédures de déploiement de l\'application',
                 ],
                 'installation' => [
                     'title' => 'Mémoire d\'Installation',
                     'file' => 'memoire_instalation.md',
-                    'icon' => 'fa-download',
-                    'description' => 'Guide d\'installation et configuration initiale'
+                    'description' => 'Guide d\'installation et configuration initiale',
                 ],
                 'commandes' => [
                     'title' => 'Ligne de Commande',
                     'file' => 'memoire_ligne_de_commande.md',
-                    'icon' => 'fa-terminal',
-                    'description' => 'Commandes utiles pour le développement'
+                    'description' => 'Commandes utiles pour le développement',
                 ],
                 'postgres' => [
                     'title' => 'PostgreSQL',
                     'file' => 'memoire_postgres.md',
-                    'icon' => 'fa-server',
-                    'description' => 'Configuration et gestion de PostgreSQL'
+                    'description' => 'Configuration et gestion de PostgreSQL',
                 ],
-            ]
-        ]
+            ],
+        ],
     ];
 
-    #[Route('/documentation/{slug}', name: 'app_documentation', defaults: ['slug' => 'entites'])]
-    public function index(string $slug): Response
+    #[Route('', name: 'api_documentation_index', methods: ['GET'])]
+    public function index(): JsonResponse
     {
-        // Rechercher la documentation dans toutes les catégories
+        $result = [];
+        foreach (self::DOCUMENTATIONS as $catKey => $catData) {
+            $result[$catKey] = [
+                'label' => $catData['label'],
+                'items' => array_map(
+                    fn (string $slug, array $item) => ['slug' => $slug, 'title' => $item['title'], 'description' => $item['description']],
+                    array_keys($catData['items']),
+                    $catData['items']
+                ),
+            ];
+        }
+
+        return $this->json($result);
+    }
+
+    #[Route('/{slug}', name: 'api_documentation_show', methods: ['GET'])]
+    public function show(string $slug): JsonResponse
+    {
         $doc = null;
         $category = null;
-        
+
         foreach (self::DOCUMENTATIONS as $catKey => $catData) {
             if (isset($catData['items'][$slug])) {
                 $doc = $catData['items'][$slug];
@@ -75,27 +84,24 @@ class DocumentationController extends AbstractController
                 break;
             }
         }
-        
-        // Vérifier si la documentation existe
+
         if (!$doc) {
             throw $this->createNotFoundException('Cette documentation n\'existe pas.');
         }
 
-        $docPath = $this->getParameter('kernel.project_dir') . '/documentation/' . $doc['file'];
-        
+        $docPath = $this->getParameter('kernel.project_dir').'/documentation/'.$doc['file'];
+
         if (!file_exists($docPath)) {
             throw $this->createNotFoundException('Le fichier de documentation est introuvable.');
         }
 
-        $content = file_get_contents($docPath);
+        $converter = new CommonMarkConverter();
 
-        return $this->render('documentation/index.html.twig', [
-            'content' => $content,
-            'currentDoc' => $slug,
-            'currentCategory' => $category,
-            'currentTitle' => $doc['title'],
-            'documentations' => self::DOCUMENTATIONS,
+        return $this->json([
+            'slug' => $slug,
+            'category' => $category,
+            'title' => $doc['title'],
+            'contentHtml' => (string) $converter->convert(file_get_contents($docPath)),
         ]);
     }
 }
-

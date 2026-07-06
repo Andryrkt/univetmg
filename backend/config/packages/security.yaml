@@ -30,34 +30,17 @@ security:
             provider: app_user_provider
             jwt: ~
 
+        # Symfony ne sert plus que l'API (JWT, ci-dessus) et quelques assets
+        # statiques/pages d'erreur ; ce firewall n'authentifie plus personne
+        # par session, il existe juste pour couvrir le reste des requêtes
+        # (ex: /build/* du serveur de dev Vite pour les assets legacy).
         main:
-            lazy: true
-            provider: app_user_provider
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-                # username_parameter: email
-                # password_parameter: password
-            logout:
-                path: app_logout
-                # where to redirect after login
-                target: app_home_private
-
-            # Activer remember me
-            remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800 # 1 week in seconds
-                path: /
-                always_remember_me: true
+            pattern: ^/
+            security: false
 
     access_control:
       - { path: ^/api/login, roles: PUBLIC_ACCESS }
+      - { path: ^/api/register, roles: PUBLIC_ACCESS }
+      - { path: ^/api/verify-email, roles: PUBLIC_ACCESS }
+      - { path: ^/api/me, roles: ROLE_USER }
       - { path: ^/api, roles: ROLE_ADMIN }
-      - { path: ^/documentation, roles: ROLE_ADMIN }
-      - { path: ^/conversion/standard, roles: ROLE_ADMIN }
-      - { path: ^/home, roles: ROLE_USER }
-      - { path: ^/profile, roles: ROLE_USER }
-      - { path: ^/login, roles: PUBLIC_ACCESS }
-      - { path: ^/register, roles: PUBLIC_ACCESS }
-      - { path: ^/reset-password, roles: PUBLIC_ACCESS }

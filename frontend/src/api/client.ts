@@ -9,6 +9,10 @@ import type {
     Client,
     ClientDetail,
     ClientPayload,
+    ConversionStandard,
+    ConversionStandardPayload,
+    DocumentationIndex,
+    DocumentationPage,
     EntreePayload,
     Fournisseur,
     FournisseurDetail,
@@ -23,6 +27,7 @@ import type {
     Promotion,
     PromotionDetail,
     PromotionPayload,
+    RegisterPayload,
     SortiePayload,
     StockDashboard,
     StockItem,
@@ -106,6 +111,19 @@ export const api = {
         auth.setToken(token);
         return token;
     },
+    register: (data: RegisterPayload) => request<{ message: string }>(`/register`, { method: "POST", body: JSON.stringify(data) }),
+    me: () => request<User>(`/me`),
+
+    listDocumentation: () => request<DocumentationIndex>(`/documentation`),
+    getDocumentation: (slug: string) => request<DocumentationPage>(`/documentation/${slug}`),
+
+    listConversionStandards: () => request<ConversionStandard[]>(`/conversion-standards`),
+    getConversionStandard: (id: string | number) => request<ConversionStandard>(`/conversion-standards/${id}`),
+    createConversionStandard: (data: ConversionStandardPayload) =>
+        request<ConversionStandard>(`/conversion-standards`, { method: "POST", body: JSON.stringify(data) }),
+    updateConversionStandard: (id: string | number, data: ConversionStandardPayload) =>
+        request<ConversionStandard>(`/conversion-standards/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    deleteConversionStandard: (id: string | number) => request<null>(`/conversion-standards/${id}`, { method: "DELETE" }),
 
     listProduits: (q?: string) => request<Produit[]>(`/produits${q ? `?q=${encodeURIComponent(q)}` : ""}`),
     getProduit: (id: string | number) => request<Produit>(`/produits/${id}`),

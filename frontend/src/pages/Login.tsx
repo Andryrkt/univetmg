@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
-import { btnPrimary, card, errorText, input, label } from "../ui";
+import { btnPrimary, card, errorText, input, label, link } from "../ui";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -46,6 +46,13 @@ export default function Login() {
                         Se connecter
                     </button>
                 </form>
+
+                <p className="mt-4 text-center text-sm text-slate-600">
+                    Pas encore de compte ?{" "}
+                    <Link to="/register" className={link}>
+                        S'inscrire
+                    </Link>
+                </p>
             </div>
         </div>
     );

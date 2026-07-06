@@ -323,6 +323,40 @@ export interface PricingPreview {
     facteurConversion: number;
 }
 
+export interface RegisterPayload {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+}
+
+export interface DocumentationCategory {
+    label: string;
+    items: Array<{ slug: string; title: string; description: string }>;
+}
+
+export type DocumentationIndex = Record<string, DocumentationCategory>;
+
+export interface DocumentationPage {
+    slug: string;
+    category: string;
+    title: string;
+    contentHtml: string;
+}
+
+export interface ConversionStandard {
+    id: number;
+    uniteOrigine: { id: number; nom: string };
+    uniteCible: { id: number; nom: string };
+    facteur: number;
+}
+
+export interface ConversionStandardPayload {
+    uniteOrigineId: string;
+    uniteCibleId: string;
+    facteur: string;
+}
+
 export type FieldErrors = Record<string, string>;
 
 export interface ApiErrorBody {

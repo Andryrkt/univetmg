@@ -1,4 +1,4 @@
-import { Link, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import ProduitList from "./pages/ProduitList";
 import ProduitForm from "./pages/ProduitForm";
 import UniteList from "./pages/UniteList";
@@ -31,7 +31,14 @@ import PromotionShow from "./pages/PromotionShow";
 import VenteList from "./pages/VenteList";
 import VenteForm from "./pages/VenteForm";
 import VenteShow from "./pages/VenteShow";
+import ConversionStandardList from "./pages/ConversionStandardList";
+import ConversionStandardForm from "./pages/ConversionStandardForm";
+import DocumentationList from "./pages/DocumentationList";
+import DocumentationShow from "./pages/DocumentationShow";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
 import RequireAuth from "./components/RequireAuth";
 import { auth } from "./api/auth";
 
@@ -47,6 +54,9 @@ function App() {
         <div id="app" className="min-h-screen bg-slate-50">
             {auth.isAuthenticated() && (
                 <nav className="flex items-center gap-6 border-b border-slate-200 bg-white px-6 py-3">
+                    <Link to="/" className="text-sm font-semibold text-slate-700 hover:text-indigo-600">
+                        Accueil
+                    </Link>
                     <Link to="/produits" className="text-sm font-semibold text-slate-700 hover:text-indigo-600">
                         Produits
                     </Link>
@@ -77,6 +87,12 @@ function App() {
                     <Link to="/promotions" className="text-sm font-semibold text-slate-700 hover:text-indigo-600">
                         Promotions
                     </Link>
+                    <Link to="/conversion-standards" className="text-sm font-semibold text-slate-700 hover:text-indigo-600">
+                        Conversions
+                    </Link>
+                    <Link to="/documentation" className="text-sm font-semibold text-slate-700 hover:text-indigo-600">
+                        Documentation
+                    </Link>
                     <button onClick={handleLogout} className="ml-auto text-sm font-medium text-slate-500 hover:text-red-600">
                         Se déconnecter
                     </button>
@@ -85,8 +101,17 @@ function App() {
 
             <main className="mx-auto max-w-5xl px-6 py-8">
                 <Routes>
-                    <Route path="/" element={<Navigate to="/produits" replace />} />
+                    <Route
+                        path="/"
+                        element={
+                            <RequireAuth>
+                                <Home />
+                            </RequireAuth>
+                        }
+                    />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
                     <Route
                         path="/produits"
                         element={
@@ -412,6 +437,46 @@ function App() {
                         element={
                             <RequireAuth>
                                 <VenteForm />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="/conversion-standards"
+                        element={
+                            <RequireAuth>
+                                <ConversionStandardList />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="/conversion-standards/new"
+                        element={
+                            <RequireAuth>
+                                <ConversionStandardForm />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="/conversion-standards/:id/edit"
+                        element={
+                            <RequireAuth>
+                                <ConversionStandardForm />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="/documentation"
+                        element={
+                            <RequireAuth>
+                                <DocumentationList />
+                            </RequireAuth>
+                        }
+                    />
+                    <Route
+                        path="/documentation/:slug"
+                        element={
+                            <RequireAuth>
+                                <DocumentationShow />
                             </RequireAuth>
                         }
                     />
